@@ -19,14 +19,25 @@ export function parseYamlFile(content) {
     .map(j => {
       const status = VALID_STATUSES.includes(j.status) ? j.status : 'draft'
       const tags = Array.isArray(j.tags) ? j.tags.map(String) : []
-      const versions = Array.isArray(j.versions)
+
+      // First pass: assign UUIDs
+      const rawVersions = Array.isArray(j.versions)
         ? j.versions.map(v => ({
             id: uid(),
             label: String(v.label ?? 'v1'),
             text: String(v.text ?? '').trim(),
             notes: String(v.notes ?? '').trim(),
+            _parentLabel: v.parentLabel ? String(v.parentLabel) : null,
           }))
-        : [{ id: uid(), label: 'v1', text: '', notes: '' }]
+        : [{ id: uid(), label: 'v1', text: '', notes: '', _parentLabel: null }]
+
+      // Second pass: resolve parentLabel → parentId
+      const labelToId = new Map(rawVersions.map(v => [v.label, v.id]))
+      const versions = rawVersions.map(({ _parentLabel, ...v }) => ({
+        ...v,
+        parentId: _parentLabel ? (labelToId.get(_parentLabel) ?? null) : null,
+      }))
+
       return {
         id: uid(),
         title: String(j.title),
@@ -95,6 +106,10 @@ export function exportToYaml({ jokes, setlists }) {
     lines.push(`    versions:`)
     for (const v of joke.versions) {
       lines.push(`      - label: ${q(v.label)}`)
+      if (v.parentId) {
+        const parent = joke.versions.find(pv => pv.id === v.parentId)
+        if (parent) lines.push(`        parentLabel: ${q(parent.label)}`)
+      }
       const textLines = String(v.text ?? '').split('\n')
       if (textLines.length === 1) {
         lines.push(`        text: ${q(v.text ?? '')}`)
