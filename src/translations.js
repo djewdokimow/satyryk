@@ -1,0 +1,219 @@
+export const TRANSLATIONS = {
+  pl: {
+    // ── nav ──────────────────────────────────────────────────────────────────
+    navJokes:      'Żarty',
+    navSetlists:   'Setlisty',
+    exportAll:     'Eksportuj wszystko',
+    exportCustom:  'Eksportuj…',
+    deleteAll:     'Usuń wszystko',
+
+    // ── JokesPage ────────────────────────────────────────────────────────────
+    jokes:            'Żarty',
+    demo:             'Demo',
+    importYaml:       'Importuj .yaml',
+    newJoke:          '+ Nowy żart',
+    search:           'Szukaj…',
+    all:              'Wszystkie',
+    noJokes:          'Brak żartów',
+    noJokesDesc:      'Dodaj nowy, zaimportuj plik .yaml lub załaduj dane demo',
+    loadDemo:         'Załaduj dane demo',
+    noJokesMatch:     'Brak żartów pasujących do filtrów',
+    demoConfirmEmpty: 'Załadować 30 przykładowych żartów i 3 setlisty?',
+    demoConfirmData:  'Załadować dane demo? Zostanie dodanych 30 żartów i 3 setlisty do obecnych danych.',
+
+    // ── JokeEditor ───────────────────────────────────────────────────────────
+    back:                '← Wróć',
+    undo:                '↩ Cofnij',
+    redo:                '↪ Ponów',
+    delete:              'Usuń',
+    jokeTitlePlaceholder:'Tytuł żartu',
+    statusLabel:         'Status',
+    tagsLabel:           'Tagi (po przecinku)',
+    tagsPlaceholder:     'związki, lotniska, rodzina…',
+    versionsLabel:       'Wersje',
+    addVersion:          '+ Dodaj wersję',
+    labelLabel:          'Etykieta',
+    deleteVersion:       'Usuń wersję',
+    textLabel:           'Tekst',
+    textPlaceholder:     'Napisz swój żart tutaj…',
+    notesLabel:          'Notatki (wskazówki sceniczne, przypomnienia)',
+    notesPlaceholder:    'Pauza przed ostatnią linią. Lepiej działa w kameralnych miejscach…',
+    newJokeTitle:        'Nowy żart',
+    deleteVersionConfirm:'Usunąć tę wersję?',
+    deleteJokeConfirm:   title => `Usunąć "${title}"? Tej operacji nie można cofnąć.`,
+    deleteAllConfirm:    jokesStr => `Usunąć ${jokesStr} i wszystkie setlisty? Tej operacji nie można cofnąć.`,
+
+    // ── SetlistsPage ─────────────────────────────────────────────────────────
+    setlists:            'Setlisty',
+    newSetlist:          '+ Nowa setlista',
+    noSetlists:          'Brak setlist',
+    noSetlistsDesc:      'Zbuduj pierwszą setlistę ze swoich żartów',
+    showReady:           '· gotowe',
+    deleteSetlistConfirm:title => `Usunąć setlistę "${title}"?`,
+    deleteSetlistTitle:  'Usuń setlistę',
+
+    // ── SetlistBuilder ───────────────────────────────────────────────────────
+    showFullText:       'Pokaż pełny tekst',
+    setlistTitlePlaceholder: 'Tytuł setlisty',
+    setlistHeader:      'Setlista',
+    clickToAddHere:     'Kliknij żart po prawej, aby dodać go tutaj',
+    addSegue:           '+ Dodaj przejście na końcu',
+    addJokes:           'Dodaj żarty',
+    noJokesMatchFilter: 'Brak pasujących żartów',
+    clickToAddHint:     '· kliknij, aby dodać',
+    deletedJoke:        'Usunięty żart',
+    segueLabel:         'przejście',
+    seguePlaceholder:   'Tekst przejścia…',
+    newSetlistTitle:    'Nowa setlista',
+
+    // ── ShowView ─────────────────────────────────────────────────────────────
+    backToBuilder: '← Wróć do edytora',
+    printPdf:      'Drukuj / PDF',
+    segueEmpty:    '[ przejście ]',
+    emptySetlist:  'Setlista jest pusta.',
+
+    // ── ExportDialog ─────────────────────────────────────────────────────────
+    exportToYaml:     'Eksportuj do .yaml',
+    exportJokesHeader:'Żarty',
+    includeStatuses:  'Uwzględnij statusy',
+    selectAll:        'zaznacz wszystkie',
+    deselectAll:      'odznacz wszystkie',
+    versionsHeader:   'Wersje',
+    allVersions:      'Wszystkie wersje',
+    latestVersionOnly:'Tylko ostatnia wersja',
+    setlistsHeader:   'Setlisty',
+    noSetlistsYet:    'Brak setlist',
+    onlySetlistJokes: 'Uwzględnij tylko żarty z wybranych setlist',
+    nothingSelected:  'Nic nie zaznaczono — zmień filtry powyżej.',
+    exportYaml:       'Eksportuj .yaml',
+    cancel:           'Anuluj',
+    exportPreview:    (j, v, s) => `Zostanie wyeksportowanych ${j} (${v}) i ${s}.`,
+
+    // ── Status labels ─────────────────────────────────────────────────────────
+    status: {
+      idea:     'pomysł',
+      draft:    'szkic',
+      working:  'w trakcie',
+      polished: 'gotowy',
+      retired:  'emeryt',
+    },
+
+    // ── Plural forms ─────────────────────────────────────────────────────────
+    plurals: {
+      joke:    { one: 'żart',      few: 'żarty',     many: 'żartów'   },
+      version: { one: 'wersja',    few: 'wersje',     many: 'wersji'   },
+      setlist: { one: 'setlista',  few: 'setlisty',   many: 'setlist'  },
+      segue:   { one: 'przejście', few: 'przejścia',  many: 'przejść'  },
+      item:    { one: 'element',   few: 'elementy',   many: 'elementów'},
+    },
+  },
+
+  en: {
+    // ── nav ──────────────────────────────────────────────────────────────────
+    navJokes:      'Jokes',
+    navSetlists:   'Setlists',
+    exportAll:     'Export all',
+    exportCustom:  'Export…',
+    deleteAll:     'Delete all',
+
+    // ── JokesPage ────────────────────────────────────────────────────────────
+    jokes:            'Jokes',
+    demo:             'Demo',
+    importYaml:       'Import .yaml',
+    newJoke:          '+ New joke',
+    search:           'Search…',
+    all:              'All',
+    noJokes:          'No jokes yet',
+    noJokesDesc:      'Add a new one, import a .yaml file, or load demo data',
+    loadDemo:         'Load demo data',
+    noJokesMatch:     'No jokes match the filters',
+    demoConfirmEmpty: 'Load 30 sample jokes and 3 setlists?',
+    demoConfirmData:  'Load demo data? 30 jokes and 3 setlists will be added to your existing data.',
+
+    // ── JokeEditor ───────────────────────────────────────────────────────────
+    back:                '← Back',
+    undo:                '↩ Undo',
+    redo:                '↪ Redo',
+    delete:              'Delete',
+    jokeTitlePlaceholder:'Joke title',
+    statusLabel:         'Status',
+    tagsLabel:           'Tags (comma-separated)',
+    tagsPlaceholder:     'relationships, airports, family…',
+    versionsLabel:       'Versions',
+    addVersion:          '+ Add version',
+    labelLabel:          'Label',
+    deleteVersion:       'Delete version',
+    textLabel:           'Text',
+    textPlaceholder:     'Write your joke here…',
+    notesLabel:          'Notes (stage directions, reminders)',
+    notesPlaceholder:    'Pause before the last line. Works better in intimate venues…',
+    newJokeTitle:        'New Joke',
+    deleteVersionConfirm:'Delete this version?',
+    deleteJokeConfirm:   title => `Delete "${title}"? This can't be undone.`,
+    deleteAllConfirm:    jokesStr => `Delete ${jokesStr} and all setlists? This cannot be undone.`,
+
+    // ── SetlistsPage ─────────────────────────────────────────────────────────
+    setlists:            'Setlists',
+    newSetlist:          '+ New setlist',
+    noSetlists:          'No setlists yet',
+    noSetlistsDesc:      'Build your first setlist from your jokes',
+    showReady:           '· show-ready',
+    deleteSetlistConfirm:title => `Delete setlist "${title}"?`,
+    deleteSetlistTitle:  'Delete setlist',
+
+    // ── SetlistBuilder ───────────────────────────────────────────────────────
+    showFullText:       'Show full text',
+    setlistTitlePlaceholder: 'Setlist title',
+    setlistHeader:      'Setlist',
+    clickToAddHere:     'Click a joke on the right to add it here',
+    addSegue:           '+ Add segue at end',
+    addJokes:           'Add jokes',
+    noJokesMatchFilter: 'No jokes match',
+    clickToAddHint:     '· click to add',
+    deletedJoke:        'Deleted joke',
+    segueLabel:         'segue',
+    seguePlaceholder:   'Transition text…',
+    newSetlistTitle:    'New Setlist',
+
+    // ── ShowView ─────────────────────────────────────────────────────────────
+    backToBuilder: '← Back to builder',
+    printPdf:      'Print / PDF',
+    segueEmpty:    '[ segue ]',
+    emptySetlist:  'No items in this setlist yet.',
+
+    // ── ExportDialog ─────────────────────────────────────────────────────────
+    exportToYaml:     'Export to .yaml',
+    exportJokesHeader:'Jokes',
+    includeStatuses:  'Statuses to include',
+    selectAll:        'select all',
+    deselectAll:      'deselect all',
+    versionsHeader:   'Versions',
+    allVersions:      'All versions',
+    latestVersionOnly:'Latest version only',
+    setlistsHeader:   'Setlists',
+    noSetlistsYet:    'No setlists yet',
+    onlySetlistJokes: 'Only include jokes used in selected setlists',
+    nothingSelected:  'Nothing selected — adjust filters above.',
+    exportYaml:       'Export .yaml',
+    cancel:           'Cancel',
+    exportPreview:    (j, v, s) => `Will export ${j} (${v}) and ${s}.`,
+
+    // ── Status labels ─────────────────────────────────────────────────────────
+    status: {
+      idea:     'idea',
+      draft:    'draft',
+      working:  'working',
+      polished: 'polished',
+      retired:  'retired',
+    },
+
+    // ── Plural forms ─────────────────────────────────────────────────────────
+    plurals: {
+      joke:    { one: 'joke',    other: 'jokes'    },
+      version: { one: 'version', other: 'versions' },
+      setlist: { one: 'setlist', other: 'setlists' },
+      segue:   { one: 'segue',   other: 'segues'   },
+      item:    { one: 'item',    other: 'items'    },
+    },
+  },
+}

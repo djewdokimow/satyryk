@@ -1,29 +1,16 @@
 import { useState } from 'react'
-import { exportSetlistMd, download } from '../markdown'
 import ShowView from './ShowView'
-
-const STATUS_BADGE = {
-  idea:     'bg-gray-100 text-gray-500',
-  draft:    'bg-amber-100 text-amber-700',
-  working:  'bg-sky-100 text-sky-700',
-  polished: 'bg-emerald-100 text-emerald-700',
-  retired:  'bg-rose-100 text-rose-500',
-}
+import { STATUS_BADGE, ALL_STATUSES } from '../constants'
+import { useLang } from '../LanguageContext'
 
 function uid() { return crypto.randomUUID() }
 
-function newSetlist() {
-  return {
-    id: uid(),
-    title: 'New Setlist',
-    items: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }
-}
-
 export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
-  const [sl, setSl] = useState(() => setlist ?? newSetlist())
+  const { t, npl } = useLang()
+  const [sl, setSl] = useState(() => setlist ?? {
+    id: uid(), title: t.newSetlistTitle, items: [],
+    createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  })
   const [showFull, setShowFull] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -39,14 +26,12 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
   function addJoke(jokeId) {
     const joke = jokes.find(j => j.id === jokeId)
     if (!joke) return
-    const item = { id: uid(), type: 'joke', jokeId, versionId: joke.versions[0]?.id }
-    updateItems([...sl.items, item])
+    updateItems([...sl.items, { id: uid(), type: 'joke', jokeId, versionId: joke.versions[0]?.id }])
   }
 
   function addSegue(afterIndex) {
-    const item = { id: uid(), type: 'segue', segueText: '' }
     const items = [...sl.items]
-    items.splice(afterIndex + 1, 0, item)
+    items.splice(afterIndex + 1, 0, { id: uid(), type: 'segue', segueText: '' })
     updateItems(items)
   }
 
@@ -54,9 +39,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
     updateItems(sl.items.map(i => i.id === id ? { ...i, ...patch } : i))
   }
 
-  function removeItem(id) {
-    updateItems(sl.items.filter(i => i.id !== id))
-  }
+  function removeItem(id) { updateItems(sl.items.filter(i => i.id !== id)) }
 
   function moveItem(index, dir) {
     const items = [...sl.items]
@@ -64,11 +47,6 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
     if (swap < 0 || swap >= items.length) return
     ;[items[index], items[swap]] = [items[swap], items[index]]
     updateItems(items)
-  }
-
-  function handleExport() {
-    const filename = sl.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'setlist'
-    download(`${filename}.md`, exportSetlistMd(sl, jokes))
   }
 
   const libraryJokes = jokes.filter(j => {
@@ -83,45 +61,37 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
 
   return (
     <div>
-      {/* Top bar */}
       <div className="flex items-center justify-between mb-5">
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
-          ← Back
+          {t.back}
         </button>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setShowFull(true)}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            Show full text
-          </button>
-          <button onClick={handleExport} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
-            Export .md
-          </button>
-        </div>
+        <button
+          onClick={() => setShowFull(true)}
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+        >
+          {t.showFullText}
+        </button>
       </div>
 
-      {/* Title */}
       <input
         type="text"
         value={sl.title}
         onChange={e => save({ title: e.target.value })}
         className="w-full text-2xl font-bold text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 focus:border-gray-900 focus:outline-none pb-2 mb-6 transition-colors"
-        placeholder="Setlist title"
+        placeholder={t.setlistTitlePlaceholder}
       />
 
       <div className="flex gap-6 items-start">
-
         {/* Left: setlist items */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Setlist</h2>
-            <span className="text-xs text-gray-400">{sl.items.length} item{sl.items.length !== 1 ? 's' : ''}</span>
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t.setlistHeader}</h2>
+            <span className="text-xs text-gray-400">{npl(sl.items.length, 'item')}</span>
           </div>
 
           {sl.items.length === 0 ? (
             <div className="border-2 border-dashed border-gray-200 rounded-xl p-10 text-center text-gray-400">
-              <p className="text-sm">Click a joke on the right to add it here</p>
+              <p className="text-sm">{t.clickToAddHere}</p>
             </div>
           ) : (
             <div className="flex flex-col gap-2">
@@ -148,41 +118,47 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
             onClick={() => addSegue(sl.items.length - 1)}
             className="mt-4 w-full py-2 text-sm border border-dashed border-gray-300 rounded-lg text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors"
           >
-            + Add segue at end
+            {t.addSegue}
           </button>
         </div>
 
         {/* Right: joke library */}
         <div className="w-72 shrink-0">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Add jokes</h2>
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t.addJokes}</h2>
 
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t.search}
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg mb-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
 
           <div className="flex gap-1 mb-3 flex-wrap">
-            {['all', 'idea', 'draft', 'working', 'polished', 'retired'].map(s => (
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-2 py-0.5 text-xs rounded-md font-medium transition-colors ${
+                statusFilter === 'all' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              {t.all}
+            </button>
+            {ALL_STATUSES.map(s => (
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`px-2 py-0.5 text-xs rounded-md capitalize font-medium transition-colors ${
-                  statusFilter === s
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-500 hover:text-gray-900'
+                className={`px-2 py-0.5 text-xs rounded-md font-medium transition-colors ${
+                  statusFilter === s ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900'
                 }`}
               >
-                {s}
+                {t.status[s]}
               </button>
             ))}
           </div>
 
           <div className="flex flex-col gap-1.5 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
             {libraryJokes.length === 0 ? (
-              <p className="text-xs text-gray-400 text-center py-4">No jokes match</p>
+              <p className="text-xs text-gray-400 text-center py-4">{t.noJokesMatchFilter}</p>
             ) : (
               libraryJokes.map(joke => (
                 <button
@@ -194,11 +170,13 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
                     <span className="text-sm font-medium text-gray-800 leading-snug group-hover:text-gray-600">
                       {joke.title}
                     </span>
-                    <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium capitalize ${STATUS_BADGE[joke.status]}`}>
-                      {joke.status}
+                    <span className={`shrink-0 text-xs px-1.5 py-0.5 rounded-full font-medium ${STATUS_BADGE[joke.status]}`}>
+                      {t.status[joke.status]}
                     </span>
                   </div>
-                  <div className="text-xs text-gray-400 mt-0.5">{joke.versions.length} version{joke.versions.length !== 1 ? 's' : ''} · click to add</div>
+                  <div className="text-xs text-gray-400 mt-0.5">
+                    {npl(joke.versions.length, 'version')}{t.clickToAddHint}
+                  </div>
                 </button>
               ))
             )}
@@ -210,77 +188,67 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
 }
 
 function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange }) {
+  const { t } = useLang()
   const joke = jokes.find(j => j.id === item.jokeId)
 
   return (
     <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5 group">
       <span className="text-xs text-gray-300 font-mono w-5 shrink-0">{index + 1}</span>
-
       <div className="flex flex-col gap-0.5 shrink-0">
         <button onClick={() => onMove(-1)} disabled={index === 0}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▲</button>
         <button onClick={() => onMove(1)} disabled={index === total - 1}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▼</button>
       </div>
-
       <div className="flex-1 min-w-0">
         {joke ? (
           <div className="flex items-center gap-2 flex-wrap">
             <span className="font-medium text-sm text-gray-900 truncate">{joke.title}</span>
-            <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium capitalize ${STATUS_BADGE[joke.status]}`}>
-              {joke.status}
+            <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${STATUS_BADGE[joke.status]}`}>
+              {t.status[joke.status]}
             </span>
           </div>
         ) : (
-          <span className="text-sm text-red-400 italic">Deleted joke</span>
+          <span className="text-sm text-red-400 italic">{t.deletedJoke}</span>
         )}
       </div>
-
       {joke && joke.versions.length > 1 && (
         <select
           value={item.versionId}
           onChange={e => onVersionChange(e.target.value)}
           className="text-xs border border-gray-200 rounded px-1.5 py-1 text-gray-600 focus:outline-none focus:ring-1 focus:ring-gray-300 shrink-0"
         >
-          {joke.versions.map(v => (
-            <option key={v.id} value={v.id}>{v.label}</option>
-          ))}
+          {joke.versions.map(v => <option key={v.id} value={v.id}>{v.label}</option>)}
         </select>
       )}
       {joke && joke.versions.length === 1 && (
         <span className="text-xs text-gray-400 shrink-0">{joke.versions[0].label}</span>
       )}
-
-      <button onClick={onRemove}
-        className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
+      <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
     </div>
   )
 }
 
 function SegueItem({ item, index, total, onMove, onRemove, onTextChange }) {
+  const { t } = useLang()
   return (
     <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 border-dashed rounded-lg px-3 py-2 group">
       <span className="text-xs text-gray-300 font-mono w-5 shrink-0">{index + 1}</span>
-
       <div className="flex flex-col gap-0.5 shrink-0">
         <button onClick={() => onMove(-1)} disabled={index === 0}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▲</button>
         <button onClick={() => onMove(1)} disabled={index === total - 1}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▼</button>
       </div>
-
-      <span className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">segue</span>
-
+      <span className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">{t.segueLabel}</span>
       <input
         type="text"
         value={item.segueText ?? ''}
         onChange={e => onTextChange(e.target.value)}
-        placeholder="Transition text..."
+        placeholder={t.seguePlaceholder}
         className="flex-1 min-w-0 bg-transparent text-sm text-gray-600 italic placeholder-gray-300 focus:outline-none"
       />
-
-      <button onClick={onRemove}
-        className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
+      <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
     </div>
   )
 }

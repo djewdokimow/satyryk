@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-
-const STATUS_OPTIONS = ['idea', 'draft', 'working', 'polished', 'retired']
+import { useLang } from '../LanguageContext'
 
 const STATUS_ACTIVE = {
   idea:     'bg-gray-500 text-white',
@@ -18,13 +17,17 @@ const STATUS_IDLE = {
   retired:  'border-rose-300 text-rose-500 hover:bg-rose-50',
 }
 
+const STATUS_OPTIONS = ['idea', 'draft', 'working', 'polished', 'retired']
+
 function uid() { return crypto.randomUUID() }
 function newVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '' } }
 
 export default function JokeEditor({ joke, dispatch, onBack }) {
+  const { t } = useLang()
+
   const initial = joke ?? {
     id: uid(),
-    title: 'New Joke',
+    title: t.newJokeTitle,
     status: 'idea',
     tags: [],
     versions: [newVersion(1)],
@@ -38,8 +41,6 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
   const [canUndo, setCanUndo] = useState(false)
   const [canRedo, setCanRedo] = useState(false)
 
-  // ── history ──────────────────────────────────────────────────────────────────
-  // Stored as JSON strings so we never accidentally mutate history entries.
   const histRef    = useRef([JSON.stringify(initial)])
   const histIdxRef = useRef(0)
   const commitRef  = useRef(null)
@@ -52,7 +53,6 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
   function commitNow(state) {
     clearTimeout(commitRef.current)
     const snap = JSON.stringify(state)
-    // Don't duplicate identical consecutive states
     if (snap === histRef.current[histIdxRef.current]) return
     const trimmed = histRef.current.slice(0, histIdxRef.current + 1)
     trimmed.push(snap)
@@ -66,9 +66,6 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     commitRef.current = setTimeout(() => commitNow(state), 1500)
   }
 
-  // ── core save ─────────────────────────────────────────────────────────────────
-  // deferred = true → text typing, commits to history after pause
-  // deferred = false → structural change, commits immediately
   function save(patch, deferred = false) {
     const next = { ...form, ...patch, updatedAt: new Date().toISOString() }
     setForm(next)
@@ -83,7 +80,6 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     save({ versions }, deferred)
   }
 
-  // ── undo / redo ───────────────────────────────────────────────────────────────
   const undo = useCallback(() => {
     clearTimeout(commitRef.current)
     if (histIdxRef.current <= 0) return
@@ -108,8 +104,6 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     refreshNavState()
   }, [activeVid, dispatch])
 
-  // Keyboard shortcut: Ctrl/Cmd+Z (undo) and Ctrl/Cmd+Shift+Z (redo)
-  // Only fires when focus is NOT on a text input — let the browser handle those natively.
   useEffect(() => {
     function onKey(e) {
       if (!(e.ctrlKey || e.metaKey) || e.key !== 'z') return
@@ -122,30 +116,28 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     return () => document.removeEventListener('keydown', onKey)
   }, [undo, redo])
 
-  // ── version helpers ───────────────────────────────────────────────────────────
   function addVersion() {
     const v = newVersion(form.versions.length + 1)
-    const versions = [...form.versions, v]
-    save({ versions })
+    save({ versions: [...form.versions, v] })
     setActiveVid(v.id)
   }
 
   function deleteVersion(id) {
     if (form.versions.length <= 1) return
-    if (!confirm('Delete this version?')) return
+    if (!confirm(t.deleteVersionConfirm)) return
     const versions = form.versions.filter(v => v.id !== id)
     save({ versions })
     setActiveVid(versions.at(-1).id)
   }
 
   function handleDelete() {
-    if (!confirm(`Delete "${form.title}"? This can't be undone.`)) return
+    if (!confirm(t.deleteJokeConfirm(form.title))) return
     dispatch({ type: 'DELETE_JOKE', id: form.id })
     onBack()
   }
 
   function handleTagsBlur() {
-    const tags = tagsRaw.split(',').map(t => t.trim()).filter(Boolean)
+    const tags = tagsRaw.split(',').map(s => s.trim()).filter(Boolean)
     save({ tags })
   }
 
@@ -153,80 +145,72 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
 
   return (
     <div>
-      {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
-          ← Back
+          {t.back}
         </button>
         <div className="flex items-center gap-2">
-          {/* Undo / Redo */}
           <button
             onClick={undo}
             disabled={!canUndo}
-            title="Undo (Ctrl+Z when not in text field)"
             className="px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
-            ↩ Undo
+            {t.undo}
           </button>
           <button
             onClick={redo}
             disabled={!canRedo}
-            title="Redo (Ctrl+Shift+Z when not in text field)"
             className="px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
-            ↪ Redo
+            {t.redo}
           </button>
           <div className="w-px h-5 bg-gray-200 mx-1" />
           <button onClick={handleDelete} className="px-3 py-1.5 text-sm border border-red-200 rounded-lg text-red-500 hover:bg-red-50 transition-colors">
-            Delete
+            {t.delete}
           </button>
         </div>
       </div>
 
-      {/* Title */}
       <input
         type="text"
         value={form.title}
         onChange={e => save({ title: e.target.value }, true)}
         onBlur={e => commitNow({ ...form, title: e.target.value })}
         className="w-full text-2xl font-bold text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 focus:border-gray-900 focus:outline-none pb-2 mb-6 transition-colors"
-        placeholder="Joke title"
+        placeholder={t.jokeTitlePlaceholder}
       />
 
-      {/* Status */}
       <div className="mb-5">
-        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Status</label>
+        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.statusLabel}</label>
         <div className="flex gap-2 flex-wrap">
           {STATUS_OPTIONS.map(s => (
             <button
               key={s}
               onClick={() => save({ status: s })}
-              className={`px-3 py-1 text-sm font-medium rounded-full border capitalize transition-colors ${
+              className={`px-3 py-1 text-sm font-medium rounded-full border transition-colors ${
                 form.status === s ? STATUS_ACTIVE[s] : `border ${STATUS_IDLE[s]}`
               }`}
             >
-              {s}
+              {t.status[s]}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Tags */}
       <div className="mb-6">
-        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Tags (comma-separated)</label>
+        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.tagsLabel}</label>
         <input
           type="text"
           value={tagsRaw}
           onChange={e => setTagsRaw(e.target.value)}
           onBlur={handleTagsBlur}
-          placeholder="relationships, airports, family..."
+          placeholder={t.tagsPlaceholder}
           className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
         />
       </div>
 
-      {/* Versions */}
       <div className="mb-2">
-        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">Versions</label>
+        <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-3">{t.versionsLabel}</label>
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {form.versions.map(v => (
             <button
@@ -245,17 +229,16 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
             onClick={addVersion}
             className="px-3 py-1.5 text-sm rounded-lg border border-dashed border-gray-300 text-gray-400 hover:border-gray-500 hover:text-gray-600 transition-colors"
           >
-            + Add version
+            {t.addVersion}
           </button>
         </div>
       </div>
 
-      {/* Version editor */}
       {active && (
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3 flex-1">
-              <label className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">Label</label>
+              <label className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">{t.labelLabel}</label>
               <input
                 type="text"
                 value={active.label}
@@ -269,32 +252,32 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
                 onClick={() => deleteVersion(active.id)}
                 className="text-xs text-red-400 hover:text-red-600 transition-colors"
               >
-                Delete version
+                {t.deleteVersion}
               </button>
             )}
           </div>
 
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Text</label>
+            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.textLabel}</label>
             <textarea
               value={active.text}
               onChange={e => saveVersion(active.id, { text: e.target.value }, true)}
               onBlur={() => commitNow(form)}
               rows={14}
               className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg font-mono resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 leading-relaxed"
-              placeholder="Write your joke here..."
+              placeholder={t.textPlaceholder}
             />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Notes (stage directions, reminders)</label>
+            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.notesLabel}</label>
             <textarea
               value={active.notes}
               onChange={e => saveVersion(active.id, { notes: e.target.value }, true)}
               onBlur={() => commitNow(form)}
               rows={3}
               className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-500 italic"
-              placeholder="Pause before the last line. Works better in intimate venues..."
+              placeholder={t.notesPlaceholder}
             />
           </div>
         </div>

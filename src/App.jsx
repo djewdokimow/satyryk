@@ -1,6 +1,7 @@
 import { useReducer, useState } from 'react'
 import { load, save } from './storage'
 import { exportToYaml, download } from './markdown'
+import { useLang } from './LanguageContext'
 import JokesPage from './components/JokesPage'
 import JokeEditor from './components/JokeEditor'
 import SetlistsPage from './components/SetlistsPage'
@@ -50,13 +51,14 @@ export default function App() {
   const [store, dispatch] = useReducer(reducer, null, load)
   const [page, setPage] = useState({ view: 'jokes', id: null })
   const [showExport, setShowExport] = useState(false)
+  const { lang, setLang, t, npl } = useLang()
 
   const go = (view, id = null) => setPage({ view, id })
 
   function handleDeleteAll() {
     const total = store.jokes.length
     if (total === 0) return
-    if (!confirm(`Delete all ${total} jokes and all setlists? This cannot be undone.`)) return
+    if (!confirm(t.deleteAllConfirm(npl(total, 'joke')))) return
     const empty = { jokes: [], setlists: [] }
     save(empty)
     dispatch({ type: '_REPLACE', data: empty })
@@ -87,40 +89,51 @@ export default function App() {
           </button>
           <nav className="flex gap-1">
             <NavBtn active={page.view === 'jokes' || page.view === 'joke'} onClick={() => go('jokes')}>
-              Jokes
+              {t.navJokes}
             </NavBtn>
             <NavBtn active={page.view === 'setlists' || page.view === 'setlist'} onClick={() => go('setlists')}>
-              Setlists
+              {t.navSetlists}
             </NavBtn>
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <span className="text-xs text-gray-400 mr-1">
-              {store.jokes.length} jokes · {store.setlists.length} setlists
+              {npl(store.jokes.length, 'joke')} · {npl(store.setlists.length, 'setlist')}
             </span>
             <button
               onClick={handleExportAll}
               disabled={store.jokes.length === 0}
-              title="Export everything to YAML"
               className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              Export all
+              {t.exportAll}
             </button>
             <button
               onClick={() => setShowExport(true)}
               disabled={store.jokes.length === 0}
-              title="Choose what to export"
               className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              Export…
+              {t.exportCustom}
             </button>
             <button
               onClick={handleDeleteAll}
               disabled={store.jokes.length === 0}
-              title="Delete all jokes and setlists"
               className="px-3 py-1.5 text-xs border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             >
-              Delete all
+              {t.deleteAll}
             </button>
+            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden ml-1">
+              <button
+                onClick={() => setLang('pl')}
+                className={`px-2 py-1 text-xs font-medium transition-colors ${lang === 'pl' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
+              >
+                PL
+              </button>
+              <button
+                onClick={() => setLang('en')}
+                className={`px-2 py-1 text-xs font-medium transition-colors ${lang === 'en' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
+              >
+                EN
+              </button>
+            </div>
           </div>
         </div>
       </header>
