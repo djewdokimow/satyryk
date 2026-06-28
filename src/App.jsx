@@ -1,9 +1,11 @@
 import { useReducer, useState } from 'react'
 import { load, save } from './storage'
+import { exportToYaml, download } from './markdown'
 import JokesPage from './components/JokesPage'
 import JokeEditor from './components/JokeEditor'
 import SetlistsPage from './components/SetlistsPage'
 import SetlistBuilder from './components/SetlistBuilder'
+import ExportDialog from './components/ExportDialog'
 
 function reducer(state, action) {
   let next = state
@@ -34,6 +36,9 @@ function reducer(state, action) {
     case 'DELETE_SETLIST':
       next = { ...state, setlists: state.setlists.filter(s => s.id !== action.id) }
       break
+    case '_REPLACE':
+      next = action.data
+      break
     default:
       return state
   }
@@ -44,11 +49,34 @@ function reducer(state, action) {
 export default function App() {
   const [store, dispatch] = useReducer(reducer, null, load)
   const [page, setPage] = useState({ view: 'jokes', id: null })
+  const [showExport, setShowExport] = useState(false)
 
   const go = (view, id = null) => setPage({ view, id })
 
+  function handleDeleteAll() {
+    const total = store.jokes.length
+    if (total === 0) return
+    if (!confirm(`Delete all ${total} jokes and all setlists? This cannot be undone.`)) return
+    const empty = { jokes: [], setlists: [] }
+    save(empty)
+    dispatch({ type: '_REPLACE', data: empty })
+  }
+
+  function handleExportAll() {
+    const yaml = exportToYaml({ jokes: store.jokes, setlists: store.setlists })
+    const date = new Date().toISOString().split('T')[0]
+    download(`satyryk-export-${date}.yaml`, yaml)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {showExport && (
+        <ExportDialog
+          jokes={store.jokes}
+          setlists={store.setlists}
+          onClose={() => setShowExport(false)}
+        />
+      )}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-6">
           <button
@@ -65,9 +93,35 @@ export default function App() {
               Setlists
             </NavBtn>
           </nav>
-          <span className="ml-auto text-xs text-gray-400">
-            {store.jokes.length} jokes · {store.setlists.length} setlists
-          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xs text-gray-400 mr-1">
+              {store.jokes.length} jokes · {store.setlists.length} setlists
+            </span>
+            <button
+              onClick={handleExportAll}
+              disabled={store.jokes.length === 0}
+              title="Export everything to YAML"
+              className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              Export all
+            </button>
+            <button
+              onClick={() => setShowExport(true)}
+              disabled={store.jokes.length === 0}
+              title="Choose what to export"
+              className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              Export…
+            </button>
+            <button
+              onClick={handleDeleteAll}
+              disabled={store.jokes.length === 0}
+              title="Delete all jokes and setlists"
+              className="px-3 py-1.5 text-xs border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            >
+              Delete all
+            </button>
+          </div>
         </div>
       </header>
 

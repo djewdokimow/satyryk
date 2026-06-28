@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { exportJokeMd, download } from '../markdown'
+import { useState, useRef, useEffect, useCallback } from 'react'
 
 const STATUS_OPTIONS = ['idea', 'draft', 'working', 'polished', 'retired']
 
@@ -21,10 +20,9 @@ const STATUS_IDLE = {
 
 function uid() { return crypto.randomUUID() }
 function newVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '' } }
-function slug(title) { return title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'joke' }
 
 export default function JokeEditor({ joke, dispatch, onBack }) {
-  const [form, setForm] = useState(() => joke ?? {
+  const initial = joke ?? {
     id: uid(),
     title: 'New Joke',
     status: 'idea',
@@ -32,21 +30,99 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     versions: [newVersion(1)],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  })
-  const [activeVid, setActiveVid] = useState(form.versions[0]?.id)
-  const [tagsRaw, setTagsRaw] = useState(form.tags.join(', '))
+  }
 
-  function save(patch) {
+  const [form, setForm] = useState(initial)
+  const [activeVid, setActiveVid] = useState(initial.versions[0]?.id)
+  const [tagsRaw, setTagsRaw] = useState(initial.tags.join(', '))
+  const [canUndo, setCanUndo] = useState(false)
+  const [canRedo, setCanRedo] = useState(false)
+
+  // ── history ──────────────────────────────────────────────────────────────────
+  // Stored as JSON strings so we never accidentally mutate history entries.
+  const histRef    = useRef([JSON.stringify(initial)])
+  const histIdxRef = useRef(0)
+  const commitRef  = useRef(null)
+
+  function refreshNavState() {
+    setCanUndo(histIdxRef.current > 0)
+    setCanRedo(histIdxRef.current < histRef.current.length - 1)
+  }
+
+  function commitNow(state) {
+    clearTimeout(commitRef.current)
+    const snap = JSON.stringify(state)
+    // Don't duplicate identical consecutive states
+    if (snap === histRef.current[histIdxRef.current]) return
+    const trimmed = histRef.current.slice(0, histIdxRef.current + 1)
+    trimmed.push(snap)
+    histRef.current = trimmed.slice(-50)
+    histIdxRef.current = histRef.current.length - 1
+    refreshNavState()
+  }
+
+  function commitLater(state) {
+    clearTimeout(commitRef.current)
+    commitRef.current = setTimeout(() => commitNow(state), 1500)
+  }
+
+  // ── core save ─────────────────────────────────────────────────────────────────
+  // deferred = true → text typing, commits to history after pause
+  // deferred = false → structural change, commits immediately
+  function save(patch, deferred = false) {
     const next = { ...form, ...patch, updatedAt: new Date().toISOString() }
     setForm(next)
     dispatch({ type: 'SAVE_JOKE', joke: next })
+    if (deferred) commitLater(next)
+    else commitNow(next)
+    return next
   }
 
-  function saveVersion(id, patch) {
+  function saveVersion(id, patch, deferred = false) {
     const versions = form.versions.map(v => v.id === id ? { ...v, ...patch } : v)
-    save({ versions })
+    save({ versions }, deferred)
   }
 
+  // ── undo / redo ───────────────────────────────────────────────────────────────
+  const undo = useCallback(() => {
+    clearTimeout(commitRef.current)
+    if (histIdxRef.current <= 0) return
+    histIdxRef.current--
+    const prev = JSON.parse(histRef.current[histIdxRef.current])
+    setForm(prev)
+    setTagsRaw(prev.tags.join(', '))
+    if (!prev.versions.some(v => v.id === activeVid)) setActiveVid(prev.versions[0]?.id)
+    dispatch({ type: 'SAVE_JOKE', joke: prev })
+    refreshNavState()
+  }, [activeVid, dispatch])
+
+  const redo = useCallback(() => {
+    clearTimeout(commitRef.current)
+    if (histIdxRef.current >= histRef.current.length - 1) return
+    histIdxRef.current++
+    const next = JSON.parse(histRef.current[histIdxRef.current])
+    setForm(next)
+    setTagsRaw(next.tags.join(', '))
+    if (!next.versions.some(v => v.id === activeVid)) setActiveVid(next.versions[0]?.id)
+    dispatch({ type: 'SAVE_JOKE', joke: next })
+    refreshNavState()
+  }, [activeVid, dispatch])
+
+  // Keyboard shortcut: Ctrl/Cmd+Z (undo) and Ctrl/Cmd+Shift+Z (redo)
+  // Only fires when focus is NOT on a text input — let the browser handle those natively.
+  useEffect(() => {
+    function onKey(e) {
+      if (!(e.ctrlKey || e.metaKey) || e.key !== 'z') return
+      const tag = document.activeElement?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return
+      e.preventDefault()
+      if (e.shiftKey) redo(); else undo()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [undo, redo])
+
+  // ── version helpers ───────────────────────────────────────────────────────────
   function addVersion() {
     const v = newVersion(form.versions.length + 1)
     const versions = [...form.versions, v]
@@ -73,23 +149,34 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
     save({ tags })
   }
 
-  function handleExport() {
-    download(`${slug(form.title)}.md`, exportJokeMd(form))
-  }
-
   const active = form.versions.find(v => v.id === activeVid) ?? form.versions[0]
 
   return (
     <div>
       {/* Top bar */}
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 transition-colors">
+        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
           ← Back
         </button>
-        <div className="flex gap-2">
-          <button onClick={handleExport} className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">
-            Export .md
+        <div className="flex items-center gap-2">
+          {/* Undo / Redo */}
+          <button
+            onClick={undo}
+            disabled={!canUndo}
+            title="Undo (Ctrl+Z when not in text field)"
+            className="px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            ↩ Undo
           </button>
+          <button
+            onClick={redo}
+            disabled={!canRedo}
+            title="Redo (Ctrl+Shift+Z when not in text field)"
+            className="px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            ↪ Redo
+          </button>
+          <div className="w-px h-5 bg-gray-200 mx-1" />
           <button onClick={handleDelete} className="px-3 py-1.5 text-sm border border-red-200 rounded-lg text-red-500 hover:bg-red-50 transition-colors">
             Delete
           </button>
@@ -100,7 +187,8 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
       <input
         type="text"
         value={form.title}
-        onChange={e => save({ title: e.target.value })}
+        onChange={e => save({ title: e.target.value }, true)}
+        onBlur={e => commitNow({ ...form, title: e.target.value })}
         className="w-full text-2xl font-bold text-gray-900 bg-transparent border-0 border-b-2 border-gray-200 focus:border-gray-900 focus:outline-none pb-2 mb-6 transition-colors"
         placeholder="Joke title"
       />
@@ -171,7 +259,8 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
               <input
                 type="text"
                 value={active.label}
-                onChange={e => saveVersion(active.id, { label: e.target.value })}
+                onChange={e => saveVersion(active.id, { label: e.target.value }, true)}
+                onBlur={() => commitNow(form)}
                 className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-48"
               />
             </div>
@@ -189,7 +278,8 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Text</label>
             <textarea
               value={active.text}
-              onChange={e => saveVersion(active.id, { text: e.target.value })}
+              onChange={e => saveVersion(active.id, { text: e.target.value }, true)}
+              onBlur={() => commitNow(form)}
               rows={14}
               className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg font-mono resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 leading-relaxed"
               placeholder="Write your joke here..."
@@ -200,7 +290,8 @@ export default function JokeEditor({ joke, dispatch, onBack }) {
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">Notes (stage directions, reminders)</label>
             <textarea
               value={active.notes}
-              onChange={e => saveVersion(active.id, { notes: e.target.value })}
+              onChange={e => saveVersion(active.id, { notes: e.target.value }, true)}
+              onBlur={() => commitNow(form)}
               rows={3}
               className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-500 italic"
               placeholder="Pause before the last line. Works better in intimate venues..."

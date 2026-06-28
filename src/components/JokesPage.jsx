@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { parseJokeMd } from '../markdown'
+import { parseYamlFile } from '../markdown'
 
 const STATUS_BADGE = {
   idea:     'bg-gray-100 text-gray-500',
@@ -25,8 +25,9 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
   async function handleImport(e) {
     for (const file of Array.from(e.target.files)) {
       const text = await file.text()
-      const joke = parseJokeMd(text, file.name)
-      if (joke) dispatch({ type: 'SAVE_JOKE', joke })
+      const { jokes, setlists } = parseYamlFile(text)
+      jokes.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
+      setlists.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
     }
     e.target.value = ''
   }
@@ -36,12 +37,12 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Jokes</h1>
         <div className="flex gap-2">
-          <input ref={importRef} type="file" accept=".md" multiple className="hidden" onChange={handleImport} />
+          <input ref={importRef} type="file" accept=".yaml,.yml" multiple className="hidden" onChange={handleImport} />
           <button
             onClick={() => importRef.current.click()}
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
           >
-            Import .md
+            Import .yaml
           </button>
           <button
             onClick={onNew}

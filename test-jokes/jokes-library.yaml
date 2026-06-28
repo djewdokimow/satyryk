@@ -1,0 +1,881 @@
+# Satyryk — Jokes Library
+# Import this file: Jokes → "Import .yaml" → select this file
+# Imports all jokes AND setlists at once.
+
+jokes:
+  - title: First Date App
+    status: polished
+    tags: [dating, apps, relationships]
+    versions:
+      - label: v1
+        text: |
+          I matched with someone on a dating app.
+          She had the same interests as me.
+          Same music. Same movies. Same sense of humor.
+          Turns out I was her second account.
+        notes: "Pause after \"humor\". Let it land before the twist."
+      - label: v2 - Shorter
+        text: |
+          I matched with a woman who had everything in common with me.
+          Same taste in music, movies, jokes.
+          Turns out she was catfishing herself.
+          We're both still confused.
+        notes: Works better in longer sets. Cut if time is short.
+      - label: v3 - Punchy
+        text: |
+          I fell in love with my own catfish account.
+          That's called growth.
+        notes: "Tag for another bit. Don't open with this."
+  - title: "My Therapist's Face"
+    status: polished
+    tags: [therapy, mental health]
+    versions:
+      - label: v1
+        text: |
+          My therapist has a face she makes
+          when I say something that requires a full hour to unpack.
+          I've started calling it "the invoice face".
+        notes: Mime the face. Big laugh in Edinburgh.
+      - label: v2 - Extended
+        text: |
+          My therapist has this face she makes.
+          Neutral. Calm. Professionally concerned.
+          I call it "the invoice face".
+          Because it appears every time I say something
+          that costs me another session.
+        notes: Better for longer sets. Adds a beat.
+  - title: Airport Security Logic
+    status: working
+    tags: [travel, airports, absurdity]
+    versions:
+      - label: v1
+        text: |
+          Airport security took my water bottle.
+          But let through a man in socks
+          carrying a bag full of cables
+          and an unsettling amount of confidence.
+        notes: Mime taking shoes off. Physical works here.
+      - label: v2 - Expanded
+        text: |
+          Airport security is theater.
+          They confiscated my 200ml moisturizer.
+          Three grams over the limit. Lethal.
+          The guy behind me walked through
+          with a bag of power banks, a belt buckle the size of Texas,
+          and what I can only describe as "an aura of ill intent".
+          They waved him through.
+        notes: "Slow down on \"aura of ill intent\". Let audience picture it."
+      - label: v3 - Character focus
+        text: |
+          There was a man at security.
+          No shoes. Full eye contact with the guard.
+          Bag full of wires.
+          He had the energy of someone who has never been questioned.
+          They let him through.
+          They took my yogurt.
+        notes: Best version so far. Test at next open mic.
+      - label: v4 - Short
+        text: |
+          They took my water.
+          Let through a man made entirely of confidence and red flags.
+          I'm not saying the system is broken
+          but I am saying I'm still thirsty.
+        notes: Good closer for travel section.
+  - title: Gym January
+    status: idea
+    tags: [gym, new year, society]
+    versions:
+      - label: v1
+        text: |
+          In January the gym is full of people who decided to change.
+          By February it's just us again.
+          The regulars.
+          The ones who never changed anything
+          and made peace with it.
+        notes: Needs a punchline. Too soft right now.
+  - title: "My Dog's Judgment"
+    status: polished
+    tags: [pets, dogs, self-awareness]
+    versions:
+      - label: v1
+        text: |
+          My dog watches me eat cereal for dinner
+          with an expression that says:
+          "I thought you were the smart one."
+        notes: Short. Works as a one-liner or opener.
+      - label: v2 - With callback
+        text: |
+          My dog has this look.
+          It's the look of someone who eats the same brown pellets every day
+          and still feels sorry for me.
+          I'm eating cereal at 11pm.
+          He's right to judge.
+        notes: Callback works if you mentioned the dog earlier.
+      - label: v3 - Darker
+        text: |
+          My dog and I have reached an understanding.
+          He doesn't ask why I'm eating cereal at midnight.
+          I don't ask why he drinks from the toilet.
+          We respect each other's choices.
+        notes: Audience likes this. Less needy than v1.
+  - title: Work From Home Reality
+    status: working
+    tags: [work, remote, pandemic]
+    versions:
+      - label: v1
+        text: |
+          I've been working from home for three years.
+          The commute is great.
+          The dress code is flexible.
+          I have not made a single friend.
+        notes: "Deadpan delivery. Don't smile at the last line."
+      - label: v2 - More detail
+        text: |
+          Working from home sounds perfect.
+          No commute. No office politics. No pants.
+          What nobody tells you
+          is that without the commute
+          you lose the thirty minutes a day
+          you used to spend being a person
+          before becoming an employee.
+          I miss that person.
+        notes: "\"Being a person before becoming an employee\" is the line."
+  - title: Parents on WhatsApp
+    status: polished
+    tags: [family, technology, parents]
+    versions:
+      - label: v1
+        text: |
+          My dad discovered WhatsApp.
+          He now sends me good morning messages
+          at 6am every day.
+          Before WhatsApp he never called.
+          I preferred that relationship.
+        notes: "Timing: beat before last line."
+      - label: v2 - Extended
+        text: |
+          My dad is on WhatsApp.
+          Every morning: a sun emoji. "Good morning, son".
+          Every evening: a moon emoji. "Good night, son".
+          He's using me as a clock.
+          I didn't hear from him for three years before this.
+          Now I'm his timezone.
+        notes: "\"I'm his timezone\" is good. Might be the button."
+      - label: v3 - With mum
+        text: |
+          My mum joined WhatsApp.
+          My dad joined to watch my mum.
+          Now I get three messages a day:
+          Mum: "Are you eating?"
+          Dad: "Did you eat?"
+          Mum: "Your father asked if you ate."
+          I'm 34 years old.
+        notes: Best crowd response. Keep this version.
+      - label: v4 - Lean
+        text: |
+          Mum joined WhatsApp.
+          Dad joined to monitor mum.
+          I'm in a group chat called "Family"
+          where nobody speaks Polish anymore
+          but everyone screenshots everything.
+        notes: Too personal for general audiences. Edinburgh only.
+      - label: v5 - Punchline focus
+        text: |
+          My whole family is now on WhatsApp.
+          We share memes. We share news. We share opinions.
+          We've run out of things to not talk about.
+        notes: Short version. Good if running long.
+  - title: Self-Checkout Machines
+    status: draft
+    tags: [technology, supermarket, frustration]
+    versions:
+      - label: v1
+        text: |
+          Self-checkout machines are optimistic.
+          They expect me to know what I'm doing.
+          Unexpected item in the bagging area.
+          The item is me. I am the unexpected item.
+        notes: Last line needs work. Too cute.
+      - label: v2
+        text: |
+          I trigger the self-checkout alarm every time.
+          Every time.
+          The assistant comes over.
+          She doesn't speak. She just fixes it.
+          We've been doing this for two years.
+          She knows. I know. We don't discuss it.
+        notes: Better but still needs a punchline.
+  - title: Subscription Services
+    status: working
+    tags: [money, streaming, modern life]
+    versions:
+      - label: v1
+        text: |
+          I have twelve streaming subscriptions.
+          I watch one show on each.
+          I'm paying forty euros a month
+          for the right to feel overwhelmed by choice
+          and watch nothing.
+        notes: Relatable opener. Test crowd response.
+      - label: v2
+        text: |
+          The worst part of streaming services
+          is the algorithm.
+          It knows what I like.
+          It knows what I'll watch next.
+          It knows I'm going to cancel
+          and it's already making it hard to find the button.
+        notes: "\"Making it hard to find the button\" lands well."
+      - label: v3 - Short
+        text: |
+          I cancelled Netflix.
+          They asked me why.
+          I said I found better content elsewhere.
+          They said where.
+          I said outside.
+          We were both lying.
+        notes: Good button for tech section.
+  - title: Adulting
+    status: draft
+    tags: [growing up, life, existential]
+    versions:
+      - label: v1
+        text: |
+          Nobody tells you that being an adult
+          means choosing between fixing the thing
+          or learning to live with the thing.
+          I have chosen. The shower squeaks now. It's fine.
+        notes: Needs more. Too thin as a standalone.
+  - title: My GPS
+    status: working
+    tags: [technology, driving, relationships]
+    versions:
+      - label: v1
+        text: |
+          My GPS said "recalculating" so many times
+          I started to feel judged.
+          Recalculating. Recalculating.
+          That's not navigation. That's disappointment.
+        notes: Mimic the GPS voice. Physicality helps here.
+      - label: v2
+        text: |
+          My GPS has given up on me.
+          It used to say "turn left in 200 meters".
+          Now it just says "recalculating"
+          in a tone that means "you already passed it, I knew you would".
+        notes: "\"I knew you would\" is good. Explore more."
+      - label: v3 - Relationship angle
+        text: |
+          I've had two long-term relationships.
+          Both ended with someone saying "recalculating".
+          One was a GPS.
+          The other was Sarah.
+          The GPS was more helpful.
+        notes: Good if doing relationship material around it.
+      - label: v4 - Punchy
+        text: |
+          My GPS and my ex have the same tone of voice.
+          Patient. Resigned. Waiting for me to realize
+          I should have listened.
+        notes: Best version. Short and lands clean.
+  - title: Online Reviews
+    status: polished
+    tags: [internet, food, consumer culture]
+    versions:
+      - label: v1
+        text: |
+          Restaurant reviews on Google are philosophy.
+          Five stars: "changed my life."
+          One star: "wrong sauce."
+          These people are living in different realities
+          and they're both writing to me.
+        notes: Pause between stars and text. Let the gap breathe.
+      - label: v2 - Character
+        text: |
+          One-star review: "The waiter looked at me funny."
+          Five-star review: "The waiter looked at me."
+          Same waiter. Same look.
+          Different experiences of being perceived.
+        notes: More specific. Audience leans in.
+  - title: The Weather App
+    status: idea
+    tags: [technology, weather, optimism]
+    versions:
+      - label: v1
+        text: |
+          My weather app says "partly cloudy with a chance of sun".
+          Every day.
+          For eight months.
+          I live in Poland. This is a lie.
+          But I appreciate the optimism.
+        notes: Might be too local. Rewrite for general audiences.
+  - title: Meal Prep Sunday
+    status: draft
+    tags: [food, health, self-improvement]
+    versions:
+      - label: v1
+        text: |
+          I did meal prep on Sunday.
+          Five portions of rice and chicken.
+          I was so proud.
+          I ate all five on Sunday evening while watching TV.
+        notes: Short but good. Needs a second beat.
+      - label: v2
+        text: |
+          Meal prep is a form of time travel.
+          You sacrifice Sunday-you
+          to help future-you.
+          Future-you is always ungrateful
+          and eats it all on Sunday anyway.
+        notes: "\"Time travel\" angle is interesting. Develop further."
+      - label: v3 - Dark
+        text: |
+          I made five meals on Sunday.
+          Healthy. Balanced. Labeled with the day.
+          Monday's meal was gone by Sunday midnight.
+          Wednesday's by Monday morning.
+          By Tuesday I was ordering pizza
+          and apologizing to the containers.
+        notes: "\"Apologizing to the containers\" is good. Keep."
+  - title: "My Ex's Netflix Account"
+    status: polished
+    tags: [relationships, breakups, technology]
+    versions:
+      - label: v1
+        text: |
+          My ex and I broke up two years ago.
+          I still use her Netflix.
+          She still uses my Spotify.
+          We are financially co-dependent exes
+          who haven't spoken since March.
+        notes: Opening bit. Sets relationship tone for set.
+      - label: v2
+        text: |
+          I know my ex is doing well
+          because she's been watching documentaries.
+          When we were together it was all reality TV.
+          Personal growth is real
+          and I'm watching it happen on her profile.
+        notes: "\"Watching it happen on her profile\" is the line."
+      - label: v3 - Confrontation
+        text: |
+          She changed the password last month.
+          Just for Netflix.
+          Still on my Spotify.
+          That's a message.
+          I'm just not sure what it means.
+        notes: "Pause before \"That's a message\". Very good."
+      - label: v4 - Button
+        text: |
+          She changed my profile name from "Dawid" to "Ex".
+          I feel seen.
+          I feel reduced.
+          I watched three episodes like that.
+        notes: Potential closer for relationship section.
+      - label: v5 - Short punchy
+        text: |
+          My ex changed my Netflix profile to "Ex".
+          Fair enough.
+          I changed her Spotify playlist name to "Moving On".
+          We're both lying.
+        notes: Best for tight sets. Clean and fast.
+  - title: Sleep Schedule
+    status: working
+    tags: [health, insomnia, modern life]
+    versions:
+      - label: v1
+        text: |
+          I've been trying to fix my sleep schedule.
+          Every night I go to bed at a reasonable time.
+          Every night I spend ninety minutes
+          reviewing decisions I made in 2014.
+        notes: Needs a specific example. Too vague.
+      - label: v2
+        text: |
+          3am is when my brain decides to audit my life.
+          Every embarrassing moment. Every missed opportunity.
+          Every time I said "you too" when a waiter said "enjoy your meal".
+          All of it. Reviewed. In full. At 3am.
+        notes: "\"You too\" to the waiter is universal. Audience always reacts."
+  - title: Wine Knowledge
+    status: working
+    tags: [food, pretension, social anxiety]
+    versions:
+      - label: v1
+        text: |
+          I know nothing about wine.
+          But I've learned to say "interesting" when I taste it.
+          That covers everything.
+          "Interesting" means yes, no, maybe, and "I'll drink it anyway".
+        notes: Could go longer with sommelier bit.
+      - label: v2 - Extended
+        text: |
+          The sommelier brought me a sample.
+          He watched me taste it.
+          I said "interesting".
+          He said "what notes do you get?"
+          I said "grape".
+          Long pause.
+          He poured it and walked away.
+        notes: "Physical acting on \"long pause\". Great crowd moment."
+      - label: v3 - Social anxiety
+        text: |
+          Wine tasting is just being judged slowly.
+          You smell it. You swirl it.
+          You try to look like someone
+          who has opinions about fermentation.
+          I have one opinion: more.
+        notes: "\"I have one opinion: more\" is a strong closer."
+  - title: Parking Ticket
+    status: retired
+    tags: [bureaucracy, city life]
+    versions:
+      - label: v1
+        text: |
+          I got a parking ticket.
+          I appealed it.
+          They rejected my appeal.
+          I appealed the rejection.
+          They rejected that too.
+          I am now in a relationship with the parking authority
+          and neither of us is happy.
+        notes: "Retired. Audiences don't care about parking tickets."
+  - title: LinkedIn Connections
+    status: working
+    tags: [social media, work, performance]
+    versions:
+      - label: v1
+        text: |
+          LinkedIn is Facebook for people
+          who are ashamed of having feelings.
+          "I'm thrilled to announce I've been laid off."
+          "Excited to share my redundancy."
+          "Grateful for this growth opportunity
+          that came with a security escort."
+        notes: "Delivery: read it like a real LinkedIn post. Serious face."
+      - label: v2
+        text: |
+          Someone on LinkedIn posted:
+          "I got fired today. It was the best thing that ever happened to me."
+          Two thousand likes.
+          I got fired once. I cried in a Tesco.
+          Nobody liked that.
+        notes: "\"Cried in a Tesco\" is very specific and very good."
+      - label: v3 - Humblebrags
+        text: |
+          The LinkedIn humblebrag is an art form.
+          "I've been offered three CEO roles. Torn."
+          "Interviewed at Google, Amazon, and a quiet farm in Tuscany."
+          "Overwhelmed by the love. Blessed."
+          No you're not. You're terrified. So am I. We're the same.
+        notes: "\"Terrified. So am I.\" hits if you make it personal."
+      - label: v4 - Short
+        text: |
+          LinkedIn is where people go
+          to perform being okay about work.
+          I'm fine. I'm growing. I'm pivoting.
+          We're all just pivoting.
+          Nobody knows what direction.
+        notes: Good closer for career section.
+  - title: The Dentist
+    status: polished
+    tags: [health, anxiety, social situations]
+    versions:
+      - label: v1
+        text: |
+          My dentist asks me questions
+          while her hands are in my mouth.
+          "How's work?"
+          I say something that means "fine".
+          She nods like she understood.
+          Maybe she did. Maybe she's just being kind.
+          That's somehow the saddest possibility.
+        notes: "Slow down at the end. Don't rush the sadness."
+      - label: v2 - Funnier
+        text: |
+          The dentist asks "does this hurt?"
+          while doing the thing that hurts.
+          I say "a bit".
+          She says "good".
+          I don't know what that means
+          but I chose to believe it's encouraging.
+        notes: "\"I chose to believe\" is a recurring character trait."
+  - title: "My Cat's Opinions"
+    status: draft
+    tags: [pets, cats, self-awareness]
+    versions:
+      - label: v1
+        text: |
+          My cat ignores me unless she wants something.
+          I've been in relationships like that.
+          At least the cat is honest about it.
+        notes: Too short. Needs development.
+      - label: v2
+        text: |
+          My cat has three modes:
+          Ignoring me. Demanding food. Sitting on my laptop.
+          She's not interested in my emotional state
+          unless my emotional state is adjacent to the kitchen.
+        notes: "\"Adjacent to the kitchen\" is the line."
+      - label: v3 - Mirror bit
+        text: |
+          My therapist says I attract unavailable people.
+          I think about my cat.
+          She sleeps on my face.
+          She bites me when I pet her.
+          She walks away mid-conversation.
+          She's my type exactly.
+        notes: Callback to therapist bit. Needs to be in a set with that joke.
+  - title: Delivery Tracking
+    status: polished
+    tags: [technology, shopping, anxiety]
+    versions:
+      - label: v1
+        text: |
+          I ordered something online.
+          The tracking said "out for delivery".
+          I watched the map for four hours.
+          He went everywhere except my street.
+          I started to take it personally.
+        notes: Mime watching the phone. Lean in physically.
+      - label: v2
+        text: |
+          The delivery driver was two streets away for forty minutes.
+          I made eye contact with his icon on the map.
+          He didn't blink.
+          He went to six other addresses first.
+          I'm not bitter. I left a five-star review.
+          I'm very bitter.
+        notes: "\"I'm not bitter\" beat then \"I'm very bitter\" — classic."
+      - label: v3 - Escalated
+        text: |
+          Package tracking is emotional warfare.
+          Expected today between 9am and 9pm.
+          That's not a window. That's a day.
+          I waited. He came at 8:58.
+          I was in the shower.
+          We both know this was intentional.
+        notes: "\"Intentional\" gets a big laugh. Keep this version."
+      - label: v4 - Absurdist
+        text: |
+          I tracked my parcel so obsessively
+          I started to worry about him.
+          Is he warm? Did he eat?
+          He's carrying my things.
+          The least I can do is care.
+        notes: Softer crowd pleaser. Good for mixed audiences.
+      - label: v5 - Short
+        text: |
+          My delivery driver and I have a complicated relationship.
+          He's never on time.
+          I'm never dressed.
+          We make it work.
+        notes: Good opener or tag. Very tight.
+  - title: Zoom Calls
+    status: retired
+    tags: [work, technology, pandemic]
+    versions:
+      - label: v1
+        text: |
+          Zoom calls taught me what I look like
+          when I think I'm listening.
+          I don't look like I'm listening.
+          I look like someone told me bad news
+          and I'm still processing it.
+        notes: Retired — too pandemic-era.
+      - label: v2 - Generic
+        text: |
+          On video calls I discovered I have a face I make
+          when I'm pretending to pay attention.
+          It's the same face I make in real life.
+          I've been getting away with it for thirty years.
+        notes: "Better angle. Maybe revive as \"video call\" generically."
+  - title: My Fitness Tracker
+    status: working
+    tags: [health, technology, self-improvement]
+    versions:
+      - label: v1
+        text: |
+          My fitness tracker congratulates me for standing up.
+          Literal applause on my wrist.
+          "Great job standing!"
+          I've achieved the minimum.
+          This is what my life has become.
+        notes: "Deadpan. Don't celebrate the applause — that's the joke."
+      - label: v2
+        text: |
+          My watch tells me to breathe.
+          Every hour: "Time to breathe."
+          I've been breathing my whole life.
+          Without a reminder.
+          But apparently now I need supervision.
+        notes: Adjust name for audience.
+      - label: v3 - Competition
+        text: |
+          My friend challenged me to a step competition on the app.
+          He won.
+          He's a postman.
+          I'm a comedian.
+          We're not the same person
+          and I respect that he didn't pretend otherwise.
+        notes: "\"Didn't pretend otherwise\" — quiet dignity joke."
+  - title: The Snooze Button
+    status: idea
+    tags: [sleep, optimism, self-deception]
+    versions:
+      - label: v1
+        text: |
+          Every time I hit snooze
+          I'm making a promise to future-me
+          that I have no intention of keeping.
+          Future-me knows this.
+          Future-me hates me.
+        notes: Too short. Feels like a tweet not a bit.
+  - title: Restaurant Menus
+    status: working
+    tags: [food, pretension, social anxiety]
+    versions:
+      - label: v1
+        text: |
+          Restaurant menus have gotten longer.
+          Three pages of descriptions.
+          "Pan-seared with a whisper of lemon and regret."
+          I just want chicken. Is there chicken?
+          I'm reading a novel about chicken.
+        notes: "\"Whisper of lemon and regret\" — improv the description."
+      - label: v2
+        text: |
+          My menu said "deconstructed Caesar salad".
+          I ordered it.
+          It was just a Caesar salad.
+          I looked at the waiter.
+          He looked at me.
+          Neither of us mentioned it.
+        notes: "Long pause after \"just a Caesar salad\". Very good."
+      - label: v3 - QR code
+        text: |
+          Restaurants replaced menus with QR codes.
+          Now I eat with my phone on the table,
+          a glass of wine in one hand,
+          connecting to their wifi with the other.
+          This is what intimacy looks like in 2024.
+        notes: "\"This is what intimacy looks like\" lands clean."
+      - label: v4 - With friend
+        text: |
+          I went to dinner with someone who reads the whole menu.
+          Aloud.
+          All three pages.
+          By the time she ordered I had eaten the bread,
+          crossed a stage of grief,
+          and was ready to go home.
+        notes: Great character bit. Works with animated performance.
+  - title: Autocorrect
+    status: polished
+    tags: [technology, communication, family]
+    versions:
+      - label: v1
+        text: |
+          Autocorrect changed "I love you" to "I live you".
+          I sent it anyway.
+          She said "what does that mean".
+          I said "it means I live you".
+          We've been together four years.
+          It's our thing now.
+        notes: True story. Audience always asks after the show.
+      - label: v2
+        text: |
+          My phone knows me better than I know myself.
+          Every time I type "I'm fine"
+          it suggests "I'm trying".
+          I don't correct it anymore.
+          The phone is right.
+        notes: Quiet. Works in intimate venues. Cut from club sets.
+      - label: v3 - Family
+        text: |
+          My dad texted "I'm proud of you"
+          but autocorrect changed it to "I'm proved of you".
+          He sent it.
+          I knew what he meant.
+          It was the first time he'd said either one.
+          I didn't correct it.
+        notes: Personal. Vulnerable closer.
+  - title: Breaking News Alerts
+    status: draft
+    tags: [media, anxiety, modern life]
+    versions:
+      - label: v1
+        text: |
+          My phone sends me breaking news alerts
+          at all hours.
+          3am: "Markets react to uncertainty."
+          4am: "Uncertainty continues."
+          5am: "Things still uncertain."
+          I didn't know I subscribed to anxiety as a service.
+        notes: "\"Anxiety as a service\" could be a title. Explore."
+      - label: v2
+        text: |
+          I turned off all notifications except calls.
+          For three days I thought everything was fine.
+          Then a friend called.
+          Nothing was fine.
+          But I was so rested.
+        notes: "\"So rested\" is the button. Make it wistful not triumphant."
+  - title: Sourdough Starter
+    status: retired
+    tags: [pandemic, food, hobbies]
+    versions:
+      - label: v1
+        text: |
+          During lockdown I made a sourdough starter.
+          Named it Gerald.
+          Fed it every day for three weeks.
+          Then I ate Gerald.
+          I'm still not sure how to feel about that.
+        notes: Retired. Too 2020. Gerald deserved better.
+  - title: Therapy Speak
+    status: working
+    tags: [therapy, language, relationships]
+    versions:
+      - label: v1
+        text: |
+          Everyone speaks therapy now.
+          "I'm not triggered, I'm processing."
+          "That's not a fight, it's a rupture."
+          "I need to hold space for this."
+          I grew up saying "fine" and "whatever".
+          We communicated less but faster.
+        notes: Good opener. Sets therapy-heavy set tone.
+      - label: v2
+        text: |
+          My friend cancelled our plans.
+          She said "I need to honor my energy today."
+          In my family we said "I don't feel like it".
+          Same message.
+          Four fewer therapy sessions to figure out.
+        notes: "\"Four fewer therapy sessions\" is the line. Don't rush it."
+      - label: v3 - Self-aware
+        text: |
+          I used to make fun of therapy speak.
+          Then I started therapy.
+          Now I talk about my attachment style at parties.
+          I've become exactly what I mocked.
+          My therapist says this is growth.
+          She might be right. That's the worst part.
+        notes: Vulnerable and funny. Best version.
+      - label: v4 - Quick
+        text: |
+          Therapy taught me to say "I feel hurt" instead of "you're wrong".
+          It's more honest.
+          It's also much harder to win an argument with.
+        notes: Good one-liner. Opener or tag.
+      - label: v5 - Relationship
+        text: |
+          I told my ex I needed closure.
+          She said she needed to process.
+          We scheduled a meeting.
+          We brought our therapists.
+          Neither therapist knew about the other.
+          That was an interesting session.
+        notes: "\"Interesting session\" — callback to therapist joke if in set."
+
+setlists:
+  - title: "Relationships & Tech — 20 min preview"
+    items:
+      - type: joke
+        title: "My Ex's Netflix Account"
+        version: v5 - Short punchy
+      - type: segue
+        text: Which brings me to why I got a therapist...
+      - type: joke
+        title: "My Therapist's Face"
+        version: v2 - Extended
+      - type: segue
+        text: And speaking of things designed to make you feel judged...
+      - type: joke
+        title: My GPS
+        version: v4 - Punchy
+      - type: segue
+        text: The GPS at least tells you where it thinks you went wrong. The app just knows.
+      - type: joke
+        title: Delivery Tracking
+        version: v3 - Escalated
+      - type: segue
+        text: "I've started to wonder if I care about people the way I care about packages."
+      - type: joke
+        title: First Date App
+        version: v3 - Punchy
+      - type: segue
+        text: "I'm working on it. My therapist says so."
+      - type: joke
+        title: Autocorrect
+        version: v3 - Family
+  - title: "Work & Modern Life — Club Set"
+    items:
+      - type: joke
+        title: LinkedIn Connections
+        version: v2
+      - type: segue
+        text: "The internet didn't make us more connected, it made us more performative."
+      - type: joke
+        title: Subscription Services
+        version: v3 - Short
+      - type: segue
+        text: At some point the convenience became the problem.
+      - type: joke
+        title: Self-Checkout Machines
+        version: v2
+      - type: segue
+        text: I go to a real cashier now. Just to be recognized.
+      - type: joke
+        title: Work From Home Reality
+        version: v2 - More detail
+      - type: segue
+        text: The real casualty of working from home is the version of you that had to pretend to be okay.
+      - type: joke
+        title: Breaking News Alerts
+        version: v2
+  - title: WIP — Full Preview (all material)
+    items:
+      - type: joke
+        title: "My Therapist's Face"
+        version: v1
+      - type: joke
+        title: Parents on WhatsApp
+        version: v3 - With mum
+      - type: segue
+        text: My family communicates entirely through screens now.
+      - type: joke
+        title: Airport Security Logic
+        version: v3 - Character focus
+      - type: joke
+        title: Delivery Tracking
+        version: v2
+      - type: segue
+        text: The package anxiety is real.
+      - type: joke
+        title: "My Dog's Judgment"
+        version: v3 - Darker
+      - type: joke
+        title: Sleep Schedule
+        version: v2
+      - type: segue
+        text: "That's what 3am is. A performance review you didn't ask for."
+      - type: joke
+        title: Wine Knowledge
+        version: v2 - Extended
+      - type: joke
+        title: Restaurant Menus
+        version: v2
+      - type: segue
+        text: Food used to be simpler. So was I.
+      - type: joke
+        title: Therapy Speak
+        version: v3 - Self-aware
+      - type: joke
+        title: "My Ex's Netflix Account"
+        version: v2
+      - type: segue
+        text: "Personal growth is real and I'm watching it happen on her profile."
+      - type: joke
+        title: Autocorrect
+        version: v1
