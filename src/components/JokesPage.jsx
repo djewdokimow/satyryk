@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react'
-import { parseYamlFile } from '../markdown'
+import { parseJsonFile, processImportData } from '../markdown'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
-import demoYaml from '../../test-jokes/jokes-library.yaml?raw'
+import demoData from '../../test-jokes/jokes-library.json'
 
 export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
   const { t, npl } = useLang()
@@ -19,7 +19,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
   async function handleImport(e) {
     for (const file of Array.from(e.target.files)) {
       const text = await file.text()
-      const { jokes: nj, setlists: ns } = parseYamlFile(text)
+      const { jokes: nj, setlists: ns } = parseJsonFile(text)
       nj.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
       ns.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
     }
@@ -29,7 +29,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
   function handleDemo() {
     const msg = jokes.length > 0 ? t.demoConfirmData : t.demoConfirmEmpty
     if (!confirm(msg)) return
-    const { jokes: dj, setlists: ds } = parseYamlFile(demoYaml)
+    const { jokes: dj, setlists: ds } = processImportData(demoData)
     dj.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
     ds.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
   }
@@ -39,7 +39,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t.jokes}</h1>
         <div className="flex gap-2">
-          <input ref={importRef} type="file" accept=".yaml,.yml" multiple className="hidden" onChange={handleImport} />
+          <input ref={importRef} type="file" accept=".json" multiple className="hidden" onChange={handleImport} />
           <button
             onClick={handleDemo}
             className="px-3 py-1.5 text-sm border border-violet-200 rounded-lg text-violet-600 hover:bg-violet-50 transition-colors"
@@ -50,7 +50,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
             onClick={() => importRef.current.click()}
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
           >
-            {t.importYaml}
+            {t.importJson}
           </button>
           <button
             onClick={onNew}

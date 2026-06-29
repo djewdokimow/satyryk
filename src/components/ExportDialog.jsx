@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { exportToYaml, download } from '../markdown'
+import { exportToJson, download } from '../markdown'
 import { ALL_STATUSES, STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
 
@@ -9,6 +9,7 @@ export default function ExportDialog({ jokes, setlists, onClose }) {
   const [versionsMode, setVersionsMode]   = useState('all')
   const [setlistIds, setSetlistIds]       = useState(new Set(setlists.map(s => s.id)))
   const [setlistJokesOnly, setSetlistJokesOnly] = useState(false)
+  const [pretty, setPretty]               = useState(false)
 
   const { filteredJokes, filteredSetlists } = useMemo(() => {
     let jokesToExport = jokes.filter(j => statuses.has(j.status))
@@ -43,8 +44,8 @@ export default function ExportDialog({ jokes, setlists, onClose }) {
   }, [jokes, setlists, statuses, versionsMode, setlistIds, setlistJokesOnly])
 
   function handleExport() {
-    const yaml = exportToYaml({ jokes: filteredJokes, setlists: filteredSetlists })
-    download(`satyryk-export-${new Date().toISOString().split('T')[0]}.yaml`, yaml)
+    const json = exportToJson({ jokes: filteredJokes, setlists: filteredSetlists }, { pretty })
+    download(`satyryk-export-${new Date().toISOString().split('T')[0]}.json`, json)
     onClose()
   }
 
@@ -64,7 +65,7 @@ export default function ExportDialog({ jokes, setlists, onClose }) {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] flex flex-col">
 
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
-          <h2 className="font-bold text-gray-900">{t.exportToYaml}</h2>
+          <h2 className="font-bold text-gray-900">{t.exportToJson}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
         </div>
 
@@ -153,6 +154,21 @@ export default function ExportDialog({ jokes, setlists, onClose }) {
               </label>
             )}
           </div>
+
+          <hr className="border-gray-100" />
+
+          {/* Format section */}
+          <div>
+            <label className="flex items-center gap-2.5 cursor-pointer group">
+              <input type="checkbox" checked={pretty}
+                onChange={e => setPretty(e.target.checked)}
+                className="accent-gray-900 w-3.5 h-3.5 shrink-0" />
+              <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+                {t.prettyPrint}
+              </span>
+            </label>
+          </div>
+
         </div>
 
         <div className="px-5 py-4 border-t border-gray-100 shrink-0">
@@ -168,7 +184,7 @@ export default function ExportDialog({ jokes, setlists, onClose }) {
             </button>
             <button onClick={handleExport} disabled={empty}
               className="px-4 py-2 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-              {t.exportYaml}
+              {t.exportJson}
             </button>
           </div>
         </div>

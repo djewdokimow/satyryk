@@ -1,5 +1,5 @@
 // Run: node test-jokes/generate.js
-// Writes test-jokes/jokes-library.yaml — import it in the app to load 30 jokes + 3 sample setlists
+// Writes test-jokes/jokes-library.json — import it in the app to load 30 jokes + 3 sample setlists
 
 import { writeFileSync } from 'fs'
 import { join, dirname } from 'path'
@@ -360,69 +360,12 @@ const setlists = [
   },
 ]
 
-// ── YAML serialiser ────────────────────────────────────────────────────────────
-
-function q(s) {
-  // Double-quote strings that contain YAML-special characters
-  if (/[:#\[\]{}|>&*!'"@%`,]/.test(s) || /^\s|\s$/.test(s)) {
-    return '"' + String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"'
-  }
-  return String(s)
-}
-
-function toYaml({ jokes, setlists }) {
-  const lines = [
-    '# Satyryk — Jokes Library',
-    '# Import this file: Jokes → "Import .yaml" → select this file',
-    '# Imports all jokes AND setlists at once.',
-    '',
-    'jokes:',
-  ]
-
-  for (const joke of jokes) {
-    lines.push(`  - title: ${q(joke.title)}`)
-    lines.push(`    status: ${joke.status}`)
-    lines.push(`    tags: [${joke.tags.map(q).join(', ')}]`)
-    lines.push(`    versions:`)
-    for (const v of joke.versions) {
-      lines.push(`      - label: ${q(v.label)}`)
-      const textLines = v.text.split('\n')
-      if (textLines.length === 1) {
-        lines.push(`        text: ${q(v.text)}`)
-      } else {
-        lines.push(`        text: |`)
-        textLines.forEach(l => lines.push(`          ${l}`))
-      }
-      if (v.notes) lines.push(`        notes: ${q(v.notes)}`)
-    }
-  }
-
-  lines.push('', 'setlists:')
-
-  for (const sl of setlists) {
-    lines.push(`  - title: ${q(sl.title)}`)
-    lines.push(`    items:`)
-    for (const item of sl.items) {
-      if (item.type === 'segue') {
-        lines.push(`      - type: segue`)
-        lines.push(`        text: ${q(item.text)}`)
-      } else {
-        lines.push(`      - type: joke`)
-        lines.push(`        title: ${q(item.title)}`)
-        lines.push(`        version: ${q(item.version)}`)
-      }
-    }
-  }
-
-  return lines.join('\n') + '\n'
-}
-
 // ── write ──────────────────────────────────────────────────────────────────────
 
-const out = join(dir, 'jokes-library.yaml')
-writeFileSync(out, toYaml({ jokes, setlists }))
+const out = join(dir, 'jokes-library.json')
+writeFileSync(out, JSON.stringify({ jokes, setlists }, null, 2))
 
 const versionCount = jokes.reduce((n, j) => n + j.versions.length, 0)
-console.log(`✓ jokes-library.yaml`)
+console.log(`✓ jokes-library.json`)
 console.log(`  ${jokes.length} jokes · ${versionCount} versions · ${setlists.length} setlists`)
-console.log(`\nImport: Jokes → "Import .yaml" → select jokes-library.yaml`)
+console.log(`\nImport: Jokes → "Import .json" → select jokes-library.json`)

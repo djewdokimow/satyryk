@@ -1,6 +1,6 @@
 import { useReducer, useState } from 'react'
 import { load, save } from './storage'
-import { exportToYaml, download } from './markdown'
+import { exportToJson, download } from './markdown'
 import { useLang } from './LanguageContext'
 import JokesPage from './components/JokesPage'
 import JokeEditor from './components/JokeEditor'
@@ -65,9 +65,9 @@ export default function App() {
   }
 
   function handleExportAll() {
-    const yaml = exportToYaml({ jokes: store.jokes, setlists: store.setlists })
+    const json = exportToJson({ jokes: store.jokes, setlists: store.setlists })
     const date = new Date().toISOString().split('T')[0]
-    download(`satyryk-export-${date}.yaml`, yaml)
+    download(`satyryk-export-${date}.json`, json)
   }
 
   return (
