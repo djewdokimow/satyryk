@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
 import PrintDialog from './PrintDialog'
+import { calcSetlistDuration } from '../utils'
 
 export default function ShowView({ setlist, jokes, onClose }) {
   const { t, npl } = useLang()
   const [showPrintDialog, setShowPrintDialog] = useState(false)
   const jokeCount = setlist.items.filter(i => i.type === 'joke').length
+  const duration  = calcSetlistDuration(setlist, jokes)
 
   return (
     <div>
@@ -29,6 +31,8 @@ export default function ShowView({ setlist, jokes, onClose }) {
         <h1 className="text-3xl font-bold text-gray-900 mb-2 print:text-2xl">{setlist.title}</h1>
         <p className="text-sm text-gray-400 mb-8 print:mb-6">
           {npl(jokeCount, 'joke')} · {new Date(setlist.updatedAt).toLocaleDateString()}
+          {duration && <> · ⏱ {duration === '?' ? '?' : `~${duration}`}</>}
+          {setlist.showTime && <> · 🎤 {setlist.showTime}</>}
         </p>
 
         <div className="flex flex-col gap-8">

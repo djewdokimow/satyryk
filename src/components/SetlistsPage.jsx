@@ -1,5 +1,6 @@
 import { STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
+import { calcSetlistDuration } from '../utils'
 
 export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew }) {
   const { t, npl } = useLang()
@@ -35,6 +36,7 @@ export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew 
             const segueItems = sl.items.filter(i => i.type === 'segue')
             const statuses   = jokeItems.map(i => jokes.find(j => j.id === i.jokeId)?.status).filter(Boolean)
             const allPolished = statuses.length > 0 && statuses.every(s => s === 'polished')
+            const duration   = calcSetlistDuration(sl, jokes)
 
             return (
               <button
@@ -50,6 +52,8 @@ export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew 
                     <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
                       <span>{npl(jokeItems.length, 'joke')}</span>
                       {segueItems.length > 0 && <span>· {npl(segueItems.length, 'segue')}</span>}
+                      {duration && <span>· ⏱ {duration === '?' ? '?' : `~${duration}`}</span>}
+                      {sl.showTime && <span>· 🎤 {sl.showTime}</span>}
                       {allPolished && <span className="text-emerald-600 font-medium">{t.showReady}</span>}
                     </div>
                     {jokeItems.length > 0 && (

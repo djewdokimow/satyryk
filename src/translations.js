@@ -64,6 +64,8 @@ export const TRANSLATIONS = {
     viewCards:          'Karty',
     showFullText:       'Tekst',
     setlistTitlePlaceholder: 'Tytuł setlisty',
+    showTimePlaceholder:     'czas show…',
+    bitsTime:                'bity',
     setlistHeader:      'Setlista',
     clickToAddHere:     'Kliknij żart po prawej, aby dodać go tutaj',
     addSegue:           '+ Dodaj przejście na końcu',
@@ -87,6 +89,7 @@ export const TRANSLATIONS = {
     printIncludeNotes:   'Uwzględnij notatki',
     printIncludeSegues:  'Uwzględnij przejścia',
     printPreserveEnters: 'Zachowaj dodatkowe puste linie',
+    printIncludeTime:    'Uwzględnij szacowany czas',
     printPreviewLabel:   'Podgląd',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────
@@ -191,6 +194,8 @@ export const TRANSLATIONS = {
     viewCards:          'Cards',
     showFullText:       'Text',
     setlistTitlePlaceholder: 'Setlist title',
+    showTimePlaceholder:     'show time…',
+    bitsTime:                'bits',
     setlistHeader:      'Setlist',
     clickToAddHere:     'Click a joke on the right to add it here',
     addSegue:           '+ Add segue at end',
@@ -214,6 +219,7 @@ export const TRANSLATIONS = {
     printIncludeNotes:   'Include notes',
     printIncludeSegues:  'Include segues',
     printPreserveEnters: 'Preserve extra blank lines',
+    printIncludeTime:    'Include time estimate',
     printPreviewLabel:   'Preview',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────

@@ -1,7 +1,8 @@
 import { useState, useMemo, Fragment } from 'react'
 import { useLang } from '../LanguageContext'
+import { calcSetlistDuration } from '../utils'
 
-export function buildPrintText(setlist, jokes, opts) {
+export function buildPrintText(setlist, jokes, opts, duration) {
   const blocks = []
   setlist.items.forEach(item => {
     if (item.type === 'segue') {
@@ -26,7 +27,12 @@ export function buildPrintText(setlist, jokes, opts) {
 
     blocks.push(parts.join('\n'))
   })
-  return blocks.join('\n\n')
+  const body = blocks.join('\n\n')
+  if (!opts.includeTime || !duration) return body
+  const timeLine = duration === '?'
+    ? `⏱ ?${setlist.showTime ? `  🎤 ${setlist.showTime}` : ''}`
+    : `⏱ ~${duration}${setlist.showTime ? `  🎤 ${setlist.showTime}` : ''}`
+  return `${timeLine}\n\n${body}`
 }
 
 export default function PrintDialog({ setlist, jokes, onClose }) {
@@ -36,9 +42,11 @@ export default function PrintDialog({ setlist, jokes, onClose }) {
     includeNotes:   false,
     includeSegues:  true,
     preserveEnters: false,
+    includeTime:    false,
   })
 
-  const text = useMemo(() => buildPrintText(setlist, jokes, opts), [setlist, jokes, opts])
+  const duration = useMemo(() => calcSetlistDuration(setlist, jokes), [setlist, jokes])
+  const text = useMemo(() => buildPrintText(setlist, jokes, opts, duration), [setlist, jokes, opts, duration])
 
   function toggle(key) {
     setOpts(o => ({ ...o, [key]: !o[key] }))
@@ -72,6 +80,15 @@ export default function PrintDialog({ setlist, jokes, onClose }) {
               <input type="checkbox" checked={opts.preserveEnters} onChange={() => toggle('preserveEnters')} />
               {t.printPreserveEnters}
             </label>
+            {duration && (
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={opts.includeTime} onChange={() => toggle('includeTime')} />
+                {t.printIncludeTime}
+                <span className="text-gray-400 text-xs">
+                  ({duration === '?' ? '?' : `~${duration}`}{setlist.showTime ? ` · 🎤 ${setlist.showTime}` : ''})
+                </span>
+              </label>
+            )}
           </div>
 
           <div className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1.5">

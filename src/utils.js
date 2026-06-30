@@ -15,3 +15,19 @@ export function formatDuration(secs) {
   const s = secs % 60
   return s ? `${m}:${String(s).padStart(2, '0')}` : `${m}m`
 }
+
+// Returns formatted duration string, '?' if any bit is missing a duration, or null if no jokes.
+export function calcSetlistDuration(setlist, jokes) {
+  const items = setlist.items.filter(i => i.type === 'joke')
+  if (items.length === 0) return null
+  const durations = items.map(item => {
+    const joke = jokes.find(j => j.id === item.jokeId)
+    const ver  = joke?.versions.find(v => v.id === item.versionId) ?? joke?.versions[0]
+    return parseDuration(ver?.duration)
+  })
+  if (durations.every(d => d !== null))
+    return formatDuration(durations.reduce((a, b) => a + b, 0))
+  if (durations.some(d => d !== null))
+    return '?'
+  return null
+}
