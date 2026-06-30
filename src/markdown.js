@@ -22,6 +22,18 @@ export function processImportData(data) {
             text:         String(v.text  ?? '').trim(),
             notes:        String(v.notes ?? '').trim(),
             _parentLabel: v.parentLabel ? String(v.parentLabel) : null,
+            reactions:    Array.isArray(v.reactions) ? v.reactions.map(String) : [],
+            duration:     v.duration ? String(v.duration) : '',
+            comments:     Array.isArray(v.comments)
+              ? v.comments.map(c => ({
+                  id:        uid(),
+                  start:     Number(c.start) || 0,
+                  end:       Number(c.end)   || 0,
+                  quote:     String(c.quote  ?? ''),
+                  text:      String(c.text   ?? ''),
+                  createdAt: c.createdAt ?? new Date().toISOString(),
+                }))
+              : [],
           }))
         : [{ id: uid(), label: 'v1', text: '', notes: '', _parentLabel: null }]
 
@@ -98,6 +110,11 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
         }
         obj.text = v.text ?? ''
         if (v.notes) obj.notes = v.notes
+        if (v.reactions?.length) obj.reactions = v.reactions
+        if (v.duration)          obj.duration  = v.duration
+        if (v.comments?.length) {
+          obj.comments = v.comments.map(({ id: _id, ...c }) => c)
+        }
         return obj
       }),
     })),

@@ -2,6 +2,71 @@ import { useState } from 'react'
 import ShowView from './ShowView'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
+import { parseDuration, formatDuration } from '../utils'
+
+function CardsView({ setlist, jokes, onClose }) {
+  const { t, npl } = useLang()
+  const jokeCount = setlist.items.filter(i => i.type === 'joke').length
+
+  const jokeItems = setlist.items.filter(i => i.type === 'joke')
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <button onClick={onClose} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+          {t.backToBuilder}
+        </button>
+      </div>
+
+      <h1 className="text-2xl font-bold text-gray-900 mb-1">{setlist.title}</h1>
+      <p className="text-sm text-gray-400 mb-6">{npl(jokeCount, 'joke')}</p>
+
+      {jokeItems.length === 0 ? (
+        <p className="text-gray-400 text-center py-16">{t.emptySetlist}</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {jokeItems.map((item, i) => {
+            const joke    = jokes.find(j => j.id === item.jokeId)
+            const version = joke?.versions.find(v => v.id === item.versionId) ?? joke?.versions[0]
+
+            if (!joke) {
+              return (
+                <div key={item.id} className="bg-white border border-red-100 rounded-xl p-4 text-red-400 text-sm italic">
+                  {t.deletedJoke}
+                </div>
+              )
+            }
+
+            return (
+              <div key={item.id} className="bg-white border border-gray-200 rounded-xl p-4">
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs text-gray-300 font-mono shrink-0">{i + 1}</span>
+                    <h3 className="font-semibold text-gray-900 leading-snug truncate">{joke.title}</h3>
+                  </div>
+                  <span className={`shrink-0 text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_BADGE[joke.status]}`}>
+                    {t.status[joke.status]}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+                  {version && <span>{version.label}</span>}
+                  {version?.duration && <span>· ⏱{version.duration}</span>}
+                  {version?.reactions?.length > 0 && <span>{version.reactions.join('')}</span>}
+                  {joke.tags.length > 0 && (
+                    <>
+                      <span>·</span>
+                      <span>{joke.tags.slice(0, 3).join(', ')}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
 
 function uid() { return crypto.randomUUID() }
 
@@ -11,7 +76,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
     id: uid(), title: t.newSetlistTitle, items: [],
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   })
-  const [showFull, setShowFull] = useState(false)
+  const [viewMode, setViewMode] = useState('edit')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
@@ -49,14 +114,27 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
     updateItems(items)
   }
 
+  const totalSecs = sl.items.reduce((sum, item) => {
+    if (item.type !== 'joke') return sum
+    const joke = jokes.find(j => j.id === item.jokeId)
+    const ver  = joke?.versions.find(v => v.id === item.versionId) ?? joke?.versions[0]
+    const s    = parseDuration(ver?.duration)
+    return s ? sum + s : sum
+  }, 0)
+  const totalDuration = totalSecs > 0 ? formatDuration(totalSecs) : null
+
   const libraryJokes = jokes.filter(j => {
     if (statusFilter !== 'all' && j.status !== statusFilter) return false
     if (search && !j.title.toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
 
-  if (showFull) {
-    return <ShowView setlist={sl} jokes={jokes} onClose={() => setShowFull(false)} />
+  if (viewMode === 'text') {
+    return <ShowView setlist={sl} jokes={jokes} onClose={() => setViewMode('edit')} />
+  }
+
+  if (viewMode === 'cards') {
+    return <CardsView setlist={sl} jokes={jokes} onClose={() => setViewMode('edit')} />
   }
 
   return (
@@ -65,12 +143,20 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
         <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
           {t.back}
         </button>
-        <button
-          onClick={() => setShowFull(true)}
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-        >
-          {t.showFullText}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setViewMode('cards')}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {t.viewCards}
+          </button>
+          <button
+            onClick={() => setViewMode('text')}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {t.showFullText}
+          </button>
+        </div>
       </div>
 
       <input
@@ -86,7 +172,12 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t.setlistHeader}</h2>
-            <span className="text-xs text-gray-400">{npl(sl.items.length, 'item')}</span>
+            <div className="flex items-center gap-3">
+              {totalDuration && (
+                <span className="text-xs text-gray-400">⏱ ~{totalDuration}</span>
+              )}
+              <span className="text-xs text-gray-400">{npl(sl.items.length, 'item')}</span>
+            </div>
           </div>
 
           {sl.items.length === 0 ? (
@@ -189,7 +280,8 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
 
 function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange }) {
   const { t } = useLang()
-  const joke = jokes.find(j => j.id === item.jokeId)
+  const joke    = jokes.find(j => j.id === item.jokeId)
+  const version = joke?.versions.find(v => v.id === item.versionId) ?? joke?.versions[0]
 
   return (
     <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-2.5 group">
@@ -223,6 +315,12 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
       )}
       {joke && joke.versions.length === 1 && (
         <span className="text-xs text-gray-400 shrink-0">{joke.versions[0].label}</span>
+      )}
+      {version?.reactions?.length > 0 && (
+        <span className="text-sm shrink-0">{version.reactions.join('')}</span>
+      )}
+      {version?.duration && (
+        <span className="text-xs text-gray-400 font-mono shrink-0">⏱{version.duration}</span>
       )}
       <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
     </div>

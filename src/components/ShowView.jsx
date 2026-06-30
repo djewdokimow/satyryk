@@ -1,18 +1,24 @@
+import { useState } from 'react'
 import { STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
+import PrintDialog from './PrintDialog'
 
 export default function ShowView({ setlist, jokes, onClose }) {
   const { t, npl } = useLang()
+  const [showPrintDialog, setShowPrintDialog] = useState(false)
   const jokeCount = setlist.items.filter(i => i.type === 'joke').length
 
   return (
     <div>
+      {showPrintDialog && (
+        <PrintDialog setlist={setlist} jokes={jokes} onClose={() => setShowPrintDialog(false)} />
+      )}
       <div className="flex items-center justify-between mb-6 print:hidden">
         <button onClick={onClose} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
           {t.backToBuilder}
         </button>
         <button
-          onClick={() => window.print()}
+          onClick={() => setShowPrintDialog(true)}
           className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
         >
           {t.printPdf}

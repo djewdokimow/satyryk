@@ -42,6 +42,10 @@ export const TRANSLATIONS = {
     textPlaceholder:     'Napisz swój żart tutaj…',
     notesLabel:          'Notatki (wskazówki sceniczne, przypomnienia)',
     notesPlaceholder:    'Pauza przed ostatnią linią. Lepiej działa w kameralnych miejscach…',
+    addComment:          'Dodaj komentarz',
+    commentPlaceholder:  'Komentarz od Buddy…',
+    editReactions:       'Edytuj emoji',
+    durationPlaceholder: '2:30',
     newJokeTitle:        'Nowy żart',
     deleteVersionConfirm:'Usunąć tę wersję?',
     deleteJokeConfirm:   title => `Usunąć "${title}"? Tej operacji nie można cofnąć.`,
@@ -57,7 +61,8 @@ export const TRANSLATIONS = {
     deleteSetlistTitle:  'Usuń setlistę',
 
     // ── SetlistBuilder ───────────────────────────────────────────────────────
-    showFullText:       'Pokaż pełny tekst',
+    viewCards:          'Karty',
+    showFullText:       'Tekst',
     setlistTitlePlaceholder: 'Tytuł setlisty',
     setlistHeader:      'Setlista',
     clickToAddHere:     'Kliknij żart po prawej, aby dodać go tutaj',
@@ -75,6 +80,14 @@ export const TRANSLATIONS = {
     printPdf:      'Drukuj / PDF',
     segueEmpty:    '[ przejście ]',
     emptySetlist:  'Setlista jest pusta.',
+
+    // ── PrintDialog ──────────────────────────────────────────────────────────
+    printOptions:        'Opcje drukowania',
+    printShowTitle:      'Pokaż tytuł żartu',
+    printIncludeNotes:   'Uwzględnij notatki',
+    printIncludeSegues:  'Uwzględnij przejścia',
+    printPreserveEnters: 'Zachowaj dodatkowe puste linie',
+    printPreviewLabel:   'Podgląd',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────
     exportToJson:      'Eksportuj do .json',
@@ -156,6 +169,10 @@ export const TRANSLATIONS = {
     textPlaceholder:     'Write your joke here…',
     notesLabel:          'Notes (stage directions, reminders)',
     notesPlaceholder:    'Pause before the last line. Works better in intimate venues…',
+    addComment:          'Add comment',
+    commentPlaceholder:  "Buddy's note…",
+    editReactions:       'Edit emojis',
+    durationPlaceholder: '2:30',
     newJokeTitle:        'New Joke',
     deleteVersionConfirm:'Delete this version?',
     deleteJokeConfirm:   title => `Delete "${title}"? This can't be undone.`,
@@ -171,7 +188,8 @@ export const TRANSLATIONS = {
     deleteSetlistTitle:  'Delete setlist',
 
     // ── SetlistBuilder ───────────────────────────────────────────────────────
-    showFullText:       'Show full text',
+    viewCards:          'Cards',
+    showFullText:       'Text',
     setlistTitlePlaceholder: 'Setlist title',
     setlistHeader:      'Setlist',
     clickToAddHere:     'Click a joke on the right to add it here',
@@ -189,6 +207,14 @@ export const TRANSLATIONS = {
     printPdf:      'Print / PDF',
     segueEmpty:    '[ segue ]',
     emptySetlist:  'No items in this setlist yet.',
+
+    // ── PrintDialog ──────────────────────────────────────────────────────────
+    printOptions:        'Print options',
+    printShowTitle:      'Show joke title',
+    printIncludeNotes:   'Include notes',
+    printIncludeSegues:  'Include segues',
+    printPreserveEnters: 'Preserve extra blank lines',
+    printPreviewLabel:   'Preview',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────
     exportToJson:      'Export to .json',

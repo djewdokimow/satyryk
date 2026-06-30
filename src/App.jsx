@@ -2,6 +2,7 @@ import { useReducer, useState } from 'react'
 import { load, save } from './storage'
 import { exportToJson, download } from './markdown'
 import { useLang } from './LanguageContext'
+import { DEFAULT_REACTION_EMOJIS } from './constants'
 import JokesPage from './components/JokesPage'
 import JokeEditor from './components/JokeEditor'
 import SetlistsPage from './components/SetlistsPage'
@@ -37,6 +38,9 @@ function reducer(state, action) {
     case 'DELETE_SETLIST':
       next = { ...state, setlists: state.setlists.filter(s => s.id !== action.id) }
       break
+    case 'SET_REACTION_EMOJIS':
+      next = { ...state, reactionEmojis: action.emojis }
+      break
     case '_REPLACE':
       next = action.data
       break
@@ -59,7 +63,7 @@ export default function App() {
     const total = store.jokes.length
     if (total === 0) return
     if (!confirm(t.deleteAllConfirm(npl(total, 'joke')))) return
-    const empty = { jokes: [], setlists: [] }
+    const empty = { jokes: [], setlists: [], reactionEmojis: store.reactionEmojis ?? DEFAULT_REACTION_EMOJIS }
     save(empty)
     dispatch({ type: '_REPLACE', data: empty })
   }
@@ -152,6 +156,7 @@ export default function App() {
             joke={page.id ? store.jokes.find(j => j.id === page.id) : null}
             dispatch={dispatch}
             onBack={() => go('jokes')}
+            reactionEmojis={store.reactionEmojis ?? DEFAULT_REACTION_EMOJIS}
           />
         )}
         {page.view === 'setlists' && (
