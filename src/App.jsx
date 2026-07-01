@@ -57,7 +57,7 @@ export default function App() {
   const [showExport, setShowExport] = useState(false)
   const { lang, setLang, t, npl } = useLang()
 
-  const go = (view, id = null) => setPage({ view, id })
+  const go = (view, id = null, versionId = null, returnTo = null) => setPage({ view, id, versionId, returnTo })
 
   function handleDeleteAll() {
     const total = store.jokes.length
@@ -147,7 +147,11 @@ export default function App() {
           <JokesPage
             jokes={store.jokes}
             dispatch={dispatch}
-            onEdit={id => go('joke', id)}
+            onEdit={id => {
+              const joke = store.jokes.find(j => j.id === id)
+              const last = joke?.versions[joke.versions.length - 1]
+              go('joke', id, last?.id)
+            }}
             onNew={() => go('joke', null)}
           />
         )}
@@ -155,8 +159,9 @@ export default function App() {
           <JokeEditor
             joke={page.id ? store.jokes.find(j => j.id === page.id) : null}
             dispatch={dispatch}
-            onBack={() => go('jokes')}
+            onBack={() => page.returnTo ? go(page.returnTo.view, page.returnTo.id) : go('jokes')}
             reactionEmojis={store.reactionEmojis ?? DEFAULT_REACTION_EMOJIS}
+            initialVersionId={page.versionId}
           />
         )}
         {page.view === 'setlists' && (
@@ -174,6 +179,7 @@ export default function App() {
             jokes={store.jokes}
             dispatch={dispatch}
             onBack={() => go('setlists')}
+            onEditJoke={(jokeId, versionId) => go('joke', jokeId, versionId, { view: 'setlist', id: page.id })}
           />
         )}
       </main>

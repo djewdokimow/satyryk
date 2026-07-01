@@ -68,7 +68,7 @@ function TreeNode({ node, activeVid, onSelect }) {
   )
 }
 
-export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = [] }) {
+export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = [], initialVersionId }) {
   const { t, lang } = useLang()
 
   const initial = joke ?? {
@@ -82,7 +82,11 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
   }
 
   const [form, setForm]         = useState(initial)
-  const [activeVid, setActiveVid] = useState(initial.versions[0]?.id)
+  const [activeVid, setActiveVid] = useState(
+    (initialVersionId && initial.versions.some(v => v.id === initialVersionId))
+      ? initialVersionId
+      : initial.versions[0]?.id
+  )
   const [tagsRaw, setTagsRaw]   = useState(initial.tags.join(', '))
   const [canUndo, setCanUndo]   = useState(false)
   const [canRedo, setCanRedo]   = useState(false)

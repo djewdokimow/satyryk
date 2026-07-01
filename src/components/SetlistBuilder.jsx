@@ -4,7 +4,7 @@ import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
 import { calcSetlistDuration } from '../utils'
 
-function PreviewModal({ joke, version, onClose }) {
+function PreviewModal({ joke, version, onClose, onEdit }) {
   const { t } = useLang()
   return (
     <div
@@ -29,7 +29,15 @@ function PreviewModal({ joke, version, onClose }) {
               {version.reactions?.length > 0 && <span>{version.reactions.join('')}</span>}
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-300 hover:text-gray-600 transition-colors text-lg leading-none shrink-0">✕</button>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => onEdit(joke.id, version.id)}
+              className="text-xs px-2.5 py-1 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 hover:border-gray-400 transition-colors"
+            >
+              {t.editJoke}
+            </button>
+            <button onClick={onClose} className="text-gray-300 hover:text-gray-600 transition-colors text-lg leading-none">✕</button>
+          </div>
         </div>
         <div className="overflow-y-auto px-6 py-4">
           <pre className="text-sm text-gray-800 whitespace-pre-wrap font-mono leading-relaxed">{version.text}</pre>
@@ -42,7 +50,7 @@ function PreviewModal({ joke, version, onClose }) {
   )
 }
 
-function CardsView({ setlist, jokes, onClose }) {
+function CardsView({ setlist, jokes, onClose, onEditJoke }) {
   const { t, npl } = useLang()
   const [preview, setPreview] = useState(null)
   const jokeCount = setlist.items.filter(i => i.type === 'joke').length
@@ -66,7 +74,12 @@ function CardsView({ setlist, jokes, onClose }) {
       </p>
 
       {preview && (
-        <PreviewModal joke={preview.joke} version={preview.version} onClose={() => setPreview(null)} />
+        <PreviewModal
+          joke={preview.joke}
+          version={preview.version}
+          onClose={() => setPreview(null)}
+          onEdit={onEditJoke}
+        />
       )}
       {jokeItems.length === 0 ? (
         <p className="text-gray-400 text-center py-16">{t.emptySetlist}</p>
@@ -125,7 +138,7 @@ function CardsView({ setlist, jokes, onClose }) {
 
 function uid() { return crypto.randomUUID() }
 
-export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
+export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEditJoke }) {
   const { t, npl } = useLang()
   const [sl, setSl] = useState(() => setlist ?? {
     id: uid(), title: t.newSetlistTitle, items: [],
@@ -182,7 +195,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
   }
 
   if (viewMode === 'cards') {
-    return <CardsView setlist={sl} jokes={jokes} onClose={() => setViewMode('edit')} />
+    return <CardsView setlist={sl} jokes={jokes} onClose={() => setViewMode('edit')} onEditJoke={onEditJoke} />
   }
 
   return (
@@ -254,6 +267,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
                         onMove={dir => moveItem(i, dir)}
                         onRemove={() => removeItem(item.id)}
                         onVersionChange={versionId => updateItem(item.id, { versionId })}
+                        onEditJoke={onEditJoke}
                       />
                     : <SegueItem item={item} index={i} total={sl.items.length}
                         onMove={dir => moveItem(i, dir)}
@@ -339,7 +353,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack }) {
   )
 }
 
-function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange }) {
+function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange, onEditJoke }) {
   const { t } = useLang()
   const [expanded, setExpanded] = useState(false)
   const joke    = jokes.find(j => j.id === item.jokeId)
@@ -397,6 +411,12 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
               {version.notes}
             </p>
           )}
+          <button
+            onClick={() => onEditJoke(joke.id, version.id)}
+            className="mt-2 text-xs text-gray-400 hover:text-gray-700 underline transition-colors"
+          >
+            {t.editJoke}
+          </button>
         </div>
       )}
     </div>
