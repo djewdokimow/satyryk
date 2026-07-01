@@ -145,6 +145,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
     createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
   })
   const [viewMode, setViewMode] = useState('edit')
+  const [mobilePanel, setMobilePanel] = useState('list')
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
 
@@ -246,9 +247,25 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
         )}
       </div>
 
+      {/* Mobile panel toggle */}
+      <div className="flex mb-4 border border-gray-200 rounded-lg overflow-hidden md:hidden">
+        <button
+          onClick={() => setMobilePanel('list')}
+          className={`flex-1 py-2 text-sm font-medium transition-colors ${mobilePanel === 'list' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          {t.setlistHeader}
+        </button>
+        <button
+          onClick={() => setMobilePanel('library')}
+          className={`flex-1 py-2 text-sm font-medium transition-colors ${mobilePanel === 'library' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+        >
+          {t.addJokes}
+        </button>
+      </div>
+
       <div className="flex gap-6 items-start">
         {/* Left: setlist items */}
-        <div className="flex-1 min-w-0">
+        <div className={`flex-1 min-w-0 ${mobilePanel !== 'list' ? 'hidden md:block' : ''}`}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">{t.setlistHeader}</h2>
             <span className="text-xs text-gray-400">{npl(sl.items.length, 'item')}</span>
@@ -289,7 +306,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
         </div>
 
         {/* Right: joke library */}
-        <div className="w-72 shrink-0">
+        <div className={`w-full md:w-72 shrink-0 ${mobilePanel !== 'library' ? 'hidden md:block' : ''}`}>
           <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t.addJokes}</h2>
 
           <input
@@ -322,7 +339,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
             ))}
           </div>
 
-          <div className="flex flex-col gap-1.5 max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
+          <div className="flex flex-col gap-1.5 max-h-[60vh] md:max-h-[calc(100vh-280px)] overflow-y-auto pr-1">
             {libraryJokes.length === 0 ? (
               <p className="text-xs text-gray-400 text-center py-4">{t.noJokesMatchFilter}</p>
             ) : (

@@ -49,7 +49,7 @@ export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew 
                     <h3 className="font-semibold text-gray-900 text-lg leading-snug mb-2 group-hover:text-gray-700">
                       {sl.title}
                     </h3>
-                    <div className="flex items-center gap-3 text-sm text-gray-500 mb-3">
+                    <div className="flex items-center gap-3 flex-wrap text-sm text-gray-500 mb-3">
                       <span>{npl(jokeItems.length, 'joke')}</span>
                       {segueItems.length > 0 && <span>· {npl(segueItems.length, 'segue')}</span>}
                       {duration && <span>· ⏱ {duration === '?' ? '?' : `~${duration}`}</span>}

@@ -84,10 +84,10 @@ export default function App() {
         />
       )}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-6">
+        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3 sm:gap-6">
           <button
             onClick={() => go('jokes')}
-            className="font-bold text-lg tracking-tight text-gray-900 hover:text-gray-600 transition-colors"
+            className="font-bold text-lg tracking-tight text-gray-900 hover:text-gray-600 transition-colors shrink-0"
           >
             Satyryk
           </button>
@@ -100,40 +100,16 @@ export default function App() {
             </NavBtn>
           </nav>
           <div className="ml-auto flex items-center gap-2">
-            <span className="text-xs text-gray-400 mr-1">
-              {npl(store.jokes.length, 'joke')} · {npl(store.setlists.length, 'setlist')}
-            </span>
-            <button
-              onClick={handleExportAll}
-              disabled={store.jokes.length === 0}
-              className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              {t.exportAll}
-            </button>
-            <button
-              onClick={() => setShowExport(true)}
-              disabled={store.jokes.length === 0}
-              className="px-3 py-1.5 text-xs border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              {t.exportCustom}
-            </button>
-            <button
-              onClick={handleDeleteAll}
-              disabled={store.jokes.length === 0}
-              className="px-3 py-1.5 text-xs border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            >
-              {t.deleteAll}
-            </button>
-            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden ml-1">
+            <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
               <button
                 onClick={() => setLang('pl')}
-                className={`px-2 py-1 text-xs font-medium transition-colors ${lang === 'pl' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
+                className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${lang === 'pl' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
               >
                 PL
               </button>
               <button
                 onClick={() => setLang('en')}
-                className={`px-2 py-1 text-xs font-medium transition-colors ${lang === 'en' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
+                className={`px-2.5 py-1.5 text-xs font-medium transition-colors ${lang === 'en' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-900'}`}
               >
                 EN
               </button>
@@ -153,6 +129,9 @@ export default function App() {
               go('joke', id, last?.id)
             }}
             onNew={() => go('joke', null)}
+            onExportAll={handleExportAll}
+            onExportCustom={() => setShowExport(true)}
+            onDeleteAll={handleDeleteAll}
           />
         )}
         {page.view === 'joke' && (

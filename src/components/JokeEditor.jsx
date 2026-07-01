@@ -242,11 +242,11 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
   return (
     <div>
       {/* ── top bar ── */}
-      <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
+      <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
+        <button onClick={onBack} className="text-sm text-gray-500 hover:text-gray-800 transition-colors shrink-0">
           {t.back}
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button onClick={undo} disabled={!canUndo}
             className="px-2.5 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-500 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
             {t.undo}
@@ -349,13 +349,13 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
       {active && (
         <div className="bg-white border border-gray-200 rounded-xl p-5">
           {/* label row */}
-          <div className="flex items-center justify-between mb-4 gap-3">
-            <div className="flex items-center gap-3 flex-1 flex-wrap">
+          <div className="flex flex-wrap items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <label className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">{t.labelLabel}</label>
               <input type="text" value={active.label}
                 onChange={e => saveVersion(active.id, { label: e.target.value }, true)}
                 onBlur={() => commitNow(form)}
-                className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-32" />
+                className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-28" />
               <div className="flex items-center gap-1.5">
                 <span className="text-gray-400 text-sm leading-none">⏱</span>
                 <input

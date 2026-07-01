@@ -4,10 +4,11 @@ import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
 import demoData from '../../test-jokes/jokes-library.json'
 
-export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
+export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll, onExportCustom, onDeleteAll }) {
   const { t, npl } = useLang()
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [menuOpen, setMenuOpen] = useState(false)
   const importRef = useRef(null)
 
   const visible = jokes.filter(j => {
@@ -34,12 +35,17 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
     ds.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
   }
 
+  const noJokes = jokes.length === 0
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">{t.jokes}</h1>
-        <div className="flex gap-2">
-          <input ref={importRef} type="file" accept=".json" multiple className="hidden" onChange={handleImport} />
+      <input ref={importRef} type="file" accept=".json" multiple className="hidden" onChange={handleImport} />
+
+      <div className="flex items-center justify-between mb-6 gap-2">
+        <h1 className="text-2xl font-bold text-gray-900 shrink-0">{t.jokes}</h1>
+
+        {/* Desktop: all buttons in one row */}
+        <div className="hidden sm:flex items-center gap-2 flex-wrap justify-end">
           <button
             onClick={handleDemo}
             className="px-3 py-1.5 text-sm border border-violet-200 rounded-lg text-violet-600 hover:bg-violet-50 transition-colors"
@@ -52,12 +58,88 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
           >
             {t.importJson}
           </button>
+          <div className="w-px h-5 bg-gray-200 shrink-0" />
+          <button
+            onClick={onExportAll}
+            disabled={noJokes}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            {t.exportAll}
+          </button>
+          <button
+            onClick={onExportCustom}
+            disabled={noJokes}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            {t.exportCustom}
+          </button>
+          <button
+            onClick={onDeleteAll}
+            disabled={noJokes}
+            className="px-3 py-1.5 text-sm border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            {t.deleteAll}
+          </button>
+          <div className="w-px h-5 bg-gray-200 shrink-0" />
           <button
             onClick={onNew}
             className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors"
           >
             {t.newJoke}
           </button>
+        </div>
+
+        {/* Mobile: Export All + hamburger */}
+        <div className="flex sm:hidden items-center gap-2">
+          <button
+            onClick={onExportAll}
+            disabled={noJokes}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          >
+            {t.exportAll}
+          </button>
+          <div className="relative">
+            <button
+              onClick={() => setMenuOpen(v => !v)}
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors leading-none"
+            >
+              ☰
+            </button>
+            {menuOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 min-w-44 overflow-hidden">
+                  <button
+                    onClick={() => { handleDemo(); setMenuOpen(false) }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors"
+                  >
+                    {t.demo}
+                  </button>
+                  <button
+                    onClick={() => { importRef.current.click(); setMenuOpen(false) }}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    {t.importJson}
+                  </button>
+                  <button
+                    onClick={() => { onExportCustom(); setMenuOpen(false) }}
+                    disabled={noJokes}
+                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-30 transition-colors"
+                  >
+                    {t.exportCustom}
+                  </button>
+                  <div className="h-px bg-gray-100 my-1" />
+                  <button
+                    onClick={() => { onDeleteAll(); setMenuOpen(false) }}
+                    disabled={noJokes}
+                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-50 disabled:opacity-30 transition-colors"
+                  >
+                    {t.deleteAll}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -67,7 +149,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
           placeholder={t.search}
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg w-48 focus:outline-none focus:ring-2 focus:ring-gray-300"
+          className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg w-full sm:w-48 focus:outline-none focus:ring-2 focus:ring-gray-300"
         />
         <div className="flex gap-1 flex-wrap">
           <FilterBtn active={filter === 'all'} onClick={() => setFilter('all')}>
@@ -102,7 +184,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
           <p className="text-sm">{t.noJokesMatch}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pb-20 sm:pb-0">
           {visible.map(joke => (
             <button
               key={joke.id}
@@ -128,6 +210,15 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew }) {
           ))}
         </div>
       )}
+
+      {/* FAB — mobile only */}
+      <button
+        onClick={onNew}
+        className="fixed bottom-6 right-6 sm:hidden w-14 h-14 bg-gray-900 text-white rounded-full shadow-xl text-2xl flex items-center justify-center z-20 hover:bg-gray-700 active:scale-95 transition-all"
+        aria-label={t.newJoke}
+      >
+        +
+      </button>
     </div>
   )
 }

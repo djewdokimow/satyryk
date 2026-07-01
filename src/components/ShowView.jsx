@@ -62,13 +62,13 @@ export default function ShowView({ setlist, jokes, onClose }) {
 
             return (
               <div key={item.id} className="border-l-4 border-gray-200 pl-5">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xs text-gray-400 font-mono">{i + 1}</span>
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <span className="text-xs text-gray-400 font-mono shrink-0">{i + 1}</span>
                   <h2 className="font-bold text-gray-900 text-lg">{joke.title}</h2>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_BADGE[joke.status]}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${STATUS_BADGE[joke.status]}`}>
                     {t.status[joke.status]}
                   </span>
-                  <span className="text-xs text-gray-400">({version.label})</span>
+                  <span className="text-xs text-gray-400 shrink-0">({version.label})</span>
                 </div>
                 <p className="joke-text text-gray-800 text-sm leading-relaxed">{version.text}</p>
                 {version.notes && (
