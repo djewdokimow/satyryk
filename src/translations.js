@@ -111,6 +111,11 @@ export const TRANSLATIONS = {
     cancel:            'Anuluj',
     exportPreview:     (j, v, s) => `Zostanie wyeksportowanych ${j} (${v}) i ${s}.`,
 
+    // ── BackupNudge ──────────────────────────────────────────────────────────
+    backupNudge:        'Twoje dane są tylko w tej przeglądarce. Warto je czasem wyeksportować.',
+    backupNudgeAction:  'Eksportuj teraz',
+    backupNudgeDismiss: 'Później',
+
     // ── Status labels ─────────────────────────────────────────────────────────
     status: {
       idea:     'pomysł',
@@ -241,6 +246,11 @@ export const TRANSLATIONS = {
     prettyPrint:       'Pretty-print (readable)',
     cancel:            'Cancel',
     exportPreview:     (j, v, s) => `Will export ${j} (${v}) and ${s}.`,
+
+    // ── BackupNudge ──────────────────────────────────────────────────────────
+    backupNudge:        'Your data lives only in this browser. Worth exporting it now and then.',
+    backupNudgeAction:  'Export now',
+    backupNudgeDismiss: 'Later',
 
     // ── Status labels ─────────────────────────────────────────────────────────
     status: {

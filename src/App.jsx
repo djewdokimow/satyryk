@@ -1,5 +1,5 @@
-import { useReducer, useState } from 'react'
-import { load, save } from './storage'
+import { useEffect, useReducer, useState } from 'react'
+import { load, save, shouldShowBackupNudge, markBackupNudgeShown } from './storage'
 import { exportToJson, download } from './markdown'
 import { useLang } from './LanguageContext'
 import { DEFAULT_REACTION_EMOJIS } from './constants'
@@ -8,6 +8,7 @@ import JokeEditor from './components/JokeEditor'
 import SetlistsPage from './components/SetlistsPage'
 import SetlistBuilder from './components/SetlistBuilder'
 import ExportDialog from './components/ExportDialog'
+import BackupNudge from './components/BackupNudge'
 
 function reducer(state, action) {
   let next = state
@@ -55,9 +56,23 @@ export default function App() {
   const [store, dispatch] = useReducer(reducer, null, load)
   const [page, setPage] = useState({ view: 'jokes', id: null })
   const [showExport, setShowExport] = useState(false)
+  const [showNudge, setShowNudge] = useState(false)
   const { lang, setLang, t, npl } = useLang()
 
   const go = (view, id = null, versionId = null, returnTo = null) => setPage({ view, id, versionId, returnTo })
+
+  useEffect(() => {
+    if ((store.jokes.length > 0 || store.setlists.length > 0) && shouldShowBackupNudge()) {
+      const timer = setTimeout(() => setShowNudge(true), 1500)
+      return () => clearTimeout(timer)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  function dismissNudge() {
+    markBackupNudgeShown()
+    setShowNudge(false)
+  }
 
   function handleDeleteAll() {
     const total = store.jokes.length
@@ -83,6 +98,7 @@ export default function App() {
           onClose={() => setShowExport(false)}
         />
       )}
+      {showNudge && <BackupNudge onExport={handleExportAll} onDismiss={dismissNudge} />}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3 sm:gap-6">
           <button
