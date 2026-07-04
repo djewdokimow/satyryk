@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Blog note draft — not committed
+docs/blog-notka.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

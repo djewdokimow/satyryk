@@ -10,6 +10,7 @@ export const TRANSLATIONS = {
     // ── JokesPage ────────────────────────────────────────────────────────────
     jokes:            'Żarty',
     demo:             'Demo',
+    guide:            'Instrukcja',
     importJson:       'Importuj .json',
     newJoke:          '+ Nowy żart',
     search:           'Szukaj…',
@@ -146,6 +147,7 @@ export const TRANSLATIONS = {
     // ── JokesPage ────────────────────────────────────────────────────────────
     jokes:            'Jokes',
     demo:             'Demo',
+    guide:            'Guide',
     importJson:       'Import .json',
     newJoke:          '+ New joke',
     search:           'Search…',

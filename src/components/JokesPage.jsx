@@ -4,8 +4,14 @@ import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
 import demoData from '../../test-jokes/jokes-library.json'
 
+const GUIDE_URLS = {
+  pl: 'https://github.com/djewdokimow/satyryk/blob/main/docs/instrukcja-obslugi.md',
+  en: 'https://github.com/djewdokimow/satyryk/blob/main/docs/user-guide.md',
+}
+
 export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll, onExportCustom, onDeleteAll }) {
-  const { t, npl } = useLang()
+  const { t, npl, lang } = useLang()
+  const guideUrl = GUIDE_URLS[lang] ?? GUIDE_URLS.en
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [menuOpen, setMenuOpen] = useState(false)
@@ -46,6 +52,16 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll,
 
         {/* Desktop: all buttons in one row */}
         <div className="hidden sm:flex items-center gap-2 flex-wrap justify-end">
+          <a
+            href={guideUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={t.guide}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <span aria-hidden="true">📖</span>
+            {t.guide}
+          </a>
           <button
             onClick={handleDemo}
             className="px-3 py-1.5 text-sm border border-violet-200 rounded-lg text-violet-600 hover:bg-violet-50 transition-colors"
@@ -109,6 +125,17 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll,
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
                 <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 min-w-44 overflow-hidden">
+                  <a
+                    href={guideUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <span aria-hidden="true">📖</span>
+                    {t.guide}
+                  </a>
+                  <div className="h-px bg-gray-100 my-1" />
                   <button
                     onClick={() => { handleDemo(); setMenuOpen(false) }}
                     className="w-full text-left px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors"
