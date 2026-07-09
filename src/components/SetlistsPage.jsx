@@ -2,6 +2,8 @@ import { STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
 import { calcSetlistDuration } from '../utils'
 
+function uid() { return crypto.randomUUID() }
+
 export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew }) {
   const { t, npl } = useLang()
 
@@ -9,6 +11,19 @@ export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew 
     e.stopPropagation()
     if (!confirm(t.deleteSetlistConfirm(title))) return
     dispatch({ type: 'DELETE_SETLIST', id })
+  }
+
+  function handleDuplicate(e, sl) {
+    e.stopPropagation()
+    const copy = {
+      ...sl,
+      id: uid(),
+      title: t.copySuffix(sl.title),
+      items: sl.items.map(i => ({ ...i, id: uid() })),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    dispatch({ type: 'SAVE_SETLIST', setlist: copy })
   }
 
   return (
@@ -74,13 +89,22 @@ export default function SetlistsPage({ setlists, jokes, dispatch, onEdit, onNew 
                       </div>
                     )}
                   </div>
-                  <button
-                    onClick={e => handleDelete(e, sl.id, sl.title)}
-                    className="text-xs text-gray-300 hover:text-red-400 transition-colors px-2 py-1 shrink-0"
-                    title={t.deleteSetlistTitle}
-                  >
-                    ✕
-                  </button>
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={e => handleDuplicate(e, sl)}
+                      className="text-xs text-gray-300 hover:text-gray-700 transition-colors px-2 py-1"
+                      title={t.copySetlistTitle}
+                    >
+                      ⧉
+                    </button>
+                    <button
+                      onClick={e => handleDelete(e, sl.id, sl.title)}
+                      className="text-xs text-gray-300 hover:text-red-400 transition-colors px-2 py-1"
+                      title={t.deleteSetlistTitle}
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
               </button>
             )

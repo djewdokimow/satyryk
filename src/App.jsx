@@ -1,14 +1,17 @@
 import { useEffect, useReducer, useState } from 'react'
 import { load, save, shouldShowBackupNudge, markBackupNudgeShown } from './storage'
-import { exportToJson, download } from './markdown'
+import { exportToJson, download, processImportData } from './markdown'
 import { useLang } from './LanguageContext'
 import { DEFAULT_REACTION_EMOJIS } from './constants'
+import demoData from '../test-jokes/jokes-library.json'
 import JokesPage from './components/JokesPage'
 import JokeEditor from './components/JokeEditor'
 import SetlistsPage from './components/SetlistsPage'
 import SetlistBuilder from './components/SetlistBuilder'
 import ExportDialog from './components/ExportDialog'
 import BackupNudge from './components/BackupNudge'
+import GuideModal from './components/GuideModal'
+import AppMenu from './components/AppMenu'
 
 function reducer(state, action) {
   let next = state
@@ -56,6 +59,7 @@ export default function App() {
   const [store, dispatch] = useReducer(reducer, null, load)
   const [page, setPage] = useState({ view: 'jokes', id: null })
   const [showExport, setShowExport] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
   const [showNudge, setShowNudge] = useState(false)
   const { lang, setLang, t, npl } = useLang()
 
@@ -89,6 +93,14 @@ export default function App() {
     download(`satyryk-export-${date}.json`, json)
   }
 
+  function handleDemo() {
+    const msg = store.jokes.length > 0 ? t.demoConfirmData : t.demoConfirmEmpty
+    if (!confirm(msg)) return
+    const { jokes: dj, setlists: ds } = processImportData(demoData)
+    dj.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
+    ds.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       {showExport && (
@@ -98,6 +110,7 @@ export default function App() {
           onClose={() => setShowExport(false)}
         />
       )}
+      {showGuide && <GuideModal onClose={() => setShowGuide(false)} />}
       {showNudge && <BackupNudge onExport={handleExportAll} onDismiss={dismissNudge} />}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3 sm:gap-6">
@@ -130,6 +143,16 @@ export default function App() {
                 EN
               </button>
             </div>
+            <AppMenu
+              jokes={store.jokes}
+              setlists={store.setlists}
+              dispatch={dispatch}
+              onGuide={() => setShowGuide(true)}
+              onDemo={handleDemo}
+              onExportAll={handleExportAll}
+              onExportCustom={() => setShowExport(true)}
+              onDeleteAll={handleDeleteAll}
+            />
           </div>
         </div>
       </header>
@@ -145,9 +168,7 @@ export default function App() {
               go('joke', id, last?.id)
             }}
             onNew={() => go('joke', null)}
-            onExportAll={handleExportAll}
-            onExportCustom={() => setShowExport(true)}
-            onDeleteAll={handleDeleteAll}
+            onDemo={handleDemo}
           />
         )}
         {page.view === 'joke' && (

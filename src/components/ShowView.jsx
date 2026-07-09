@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { STATUS_BADGE } from '../constants'
 import { useLang } from '../LanguageContext'
 import PrintDialog from './PrintDialog'
-import { calcSetlistDuration } from '../utils'
+import { calcSetlistDuration, roleChipProps } from '../utils'
 
 export default function ShowView({ setlist, jokes, onClose }) {
   const { t, npl } = useLang()
@@ -61,13 +61,18 @@ export default function ShowView({ setlist, jokes, onClose }) {
             }
 
             return (
-              <div key={item.id} className="border-l-4 border-gray-200 pl-5">
+              <div key={item.id} className={`border-l-4 pl-5 ${item.role === 'optional' ? 'border-amber-200' : item.role === 'saver' ? 'border-sky-200' : 'border-gray-200'}`}>
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <span className="text-xs text-gray-400 font-mono shrink-0">{i + 1}</span>
                   <h2 className="font-bold text-gray-900 text-lg">{joke.title}</h2>
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${STATUS_BADGE[joke.status]}`}>
                     {t.status[joke.status]}
                   </span>
+                  {item.role && (
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${roleChipProps(item.role, t).cls}`}>
+                      {roleChipProps(item.role, t).label}
+                    </span>
+                  )}
                   <span className="text-xs text-gray-400 shrink-0">({version.label})</span>
                 </div>
                 <p className="joke-text text-gray-800 text-sm leading-relaxed">{version.text}</p>

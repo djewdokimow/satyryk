@@ -1,3 +1,10 @@
+// Visual props for a setlist joke's role marker (optional / saver / normal).
+export function roleChipProps(role, t) {
+  if (role === 'optional') return { cls: 'bg-amber-100 text-amber-700 border border-amber-200', label: t.roleOptional }
+  if (role === 'saver')    return { cls: 'bg-sky-100 text-sky-700 border border-sky-200', label: `🛟 ${t.roleSaver}` }
+  return { cls: 'border border-dashed border-gray-300 text-gray-300', label: '⚑' }
+}
+
 // Parse a duration string entered by the user into seconds.
 // Supports: "2:30" (m:ss), "3" or "3.5" (treated as minutes).
 export function parseDuration(str) {

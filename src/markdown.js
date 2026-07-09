@@ -70,7 +70,8 @@ export function processImportData(data) {
           const version =
             joke.versions.find(v => v.label.toLowerCase().startsWith(wantedLabel)) ??
             joke.versions[0]
-          return { id: uid(), type: 'joke', jokeId: joke.id, versionId: version?.id }
+          const role = item.role === 'optional' || item.role === 'saver' ? item.role : undefined
+          return { id: uid(), type: 'joke', jokeId: joke.id, versionId: version?.id, ...(role ? { role } : {}) }
         })
         .filter(Boolean)
       return {
@@ -126,7 +127,12 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
           const joke    = jokes.find(j => j.id === item.jokeId)
           const version = joke?.versions.find(v => v.id === item.versionId)
           if (!joke) return []
-          return [{ type: 'joke', title: joke.title, ...(version ? { version: version.label } : {}) }]
+          return [{
+            type: 'joke',
+            title: joke.title,
+            ...(version ? { version: version.label } : {}),
+            ...(item.role ? { role: item.role } : {}),
+          }]
         }),
       })),
     } : {}),

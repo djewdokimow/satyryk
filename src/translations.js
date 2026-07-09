@@ -3,6 +3,7 @@ export const TRANSLATIONS = {
     // ── nav ──────────────────────────────────────────────────────────────────
     navJokes:      'Żarty',
     navSetlists:   'Setlisty',
+    menu:          'Menu',
     exportAll:     'Eksportuj wszystko',
     exportCustom:  'Eksportuj…',
     deleteAll:     'Usuń wszystko',
@@ -61,6 +62,9 @@ export const TRANSLATIONS = {
     showReady:           '· gotowe',
     deleteSetlistConfirm:title => `Usunąć setlistę "${title}"?`,
     deleteSetlistTitle:  'Usuń setlistę',
+    copySetlist:         'Duplikuj',
+    copySetlistTitle:    'Duplikuj setlistę',
+    copySuffix:          title => `${title} (kopia)`,
 
     // ── SetlistBuilder ───────────────────────────────────────────────────────
     viewCards:          'Karty',
@@ -78,6 +82,9 @@ export const TRANSLATIONS = {
     segueLabel:         'przejście',
     seguePlaceholder:   'Tekst przejścia…',
     newSetlistTitle:    'Nowa setlista',
+    roleOptional:       'opcja',
+    roleSaver:          'ratunek',
+    markRoleHint:       'Oznacz: zwykły → opcjonalny → ratunkowy',
 
     // ── ShowView ─────────────────────────────────────────────────────────────
     backToBuilder: '← Wróć do edytora',
@@ -140,6 +147,7 @@ export const TRANSLATIONS = {
     // ── nav ──────────────────────────────────────────────────────────────────
     navJokes:      'Jokes',
     navSetlists:   'Setlists',
+    menu:          'Menu',
     exportAll:     'Export all',
     exportCustom:  'Export…',
     deleteAll:     'Delete all',
@@ -198,6 +206,9 @@ export const TRANSLATIONS = {
     showReady:           '· show-ready',
     deleteSetlistConfirm:title => `Delete setlist "${title}"?`,
     deleteSetlistTitle:  'Delete setlist',
+    copySetlist:         'Duplicate',
+    copySetlistTitle:    'Duplicate setlist',
+    copySuffix:          title => `${title} (copy)`,
 
     // ── SetlistBuilder ───────────────────────────────────────────────────────
     viewCards:          'Cards',
@@ -215,6 +226,9 @@ export const TRANSLATIONS = {
     segueLabel:         'segue',
     seguePlaceholder:   'Transition text…',
     newSetlistTitle:    'New Setlist',
+    roleOptional:       'optional',
+    roleSaver:          'saver',
+    markRoleHint:       'Mark: normal → optional → saver',
 
     // ── ShowView ─────────────────────────────────────────────────────────────
     backToBuilder: '← Back to builder',

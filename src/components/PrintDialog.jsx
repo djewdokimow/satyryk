@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useLang } from '../LanguageContext'
 import { calcSetlistDuration } from '../utils'
 
-export function buildPrintText(setlist, jokes, opts, duration) {
+export function buildPrintText(setlist, jokes, opts, duration, roleLabels = null) {
   const blocks = []
   setlist.items.forEach(item => {
     if (item.type === 'segue') {
@@ -17,7 +17,10 @@ export function buildPrintText(setlist, jokes, opts, duration) {
     if (!joke || !version) return
 
     const parts = []
-    if (opts.showTitle) parts.push(joke.title)
+    if (opts.showTitle) {
+      const mark = roleLabels && item.role ? ` (${roleLabels[item.role]})` : ''
+      parts.push(joke.title + mark)
+    }
 
     let text = (version.text ?? '').trim()
     if (!opts.preserveEnters) text = text.replace(/\n{2,}/g, '\n')
@@ -47,7 +50,10 @@ export default function PrintDialog({ setlist, jokes, onClose }) {
   })
 
   const duration = useMemo(() => calcSetlistDuration(setlist, jokes), [setlist, jokes])
-  const text = useMemo(() => buildPrintText(setlist, jokes, opts, duration), [setlist, jokes, opts, duration])
+  const text = useMemo(
+    () => buildPrintText(setlist, jokes, opts, duration, { optional: t.roleOptional, saver: t.roleSaver }),
+    [setlist, jokes, opts, duration, t],
+  )
 
   function toggle(key) {
     setOpts(o => ({ ...o, [key]: !o[key] }))

@@ -2,7 +2,11 @@ import { useState } from 'react'
 import ShowView from './ShowView'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
-import { calcSetlistDuration } from '../utils'
+import { calcSetlistDuration, roleChipProps } from '../utils'
+
+// Per-setlist joke role: undefined (normal) → 'optional' → 'saver' → normal.
+const ROLE_CYCLE = { normal: 'optional', optional: 'saver', saver: 'normal' }
+function nextRole(role) { return ROLE_CYCLE[role || 'normal'] }
 
 function PreviewModal({ joke, version, onClose, onEdit }) {
   const { t } = useLang()
@@ -117,6 +121,11 @@ function CardsView({ setlist, jokes, onClose, onEditJoke }) {
                   <p className="text-xs text-gray-500 leading-snug mb-2 line-clamp-2">{snippet}</p>
                 )}
                 <div className="text-xs text-gray-400 flex items-center gap-2 flex-wrap">
+                  {item.role && (
+                    <span className={`px-1.5 py-0.5 rounded-full font-medium ${roleChipProps(item.role, t).cls}`}>
+                      {roleChipProps(item.role, t).label}
+                    </span>
+                  )}
                   {version && <span>{version.label}</span>}
                   {version?.duration && <span>· ⏱{version.duration}</span>}
                   {version?.reactions?.length > 0 && <span>{version.reactions.join('')}</span>}
@@ -171,6 +180,11 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
 
   function updateItem(id, patch) {
     updateItems(sl.items.map(i => i.id === id ? { ...i, ...patch } : i))
+  }
+
+  function cycleRole(item) {
+    const nr = nextRole(item.role)
+    updateItem(item.id, { role: nr === 'normal' ? undefined : nr })
   }
 
   function removeItem(id) { updateItems(sl.items.filter(i => i.id !== id)) }
@@ -284,6 +298,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
                         onMove={dir => moveItem(i, dir)}
                         onRemove={() => removeItem(item.id)}
                         onVersionChange={versionId => updateItem(item.id, { versionId })}
+                        onRoleCycle={() => cycleRole(item)}
                         onEditJoke={onEditJoke}
                       />
                     : <SegueItem item={item} index={i} total={sl.items.length}
@@ -370,11 +385,12 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
   )
 }
 
-function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange, onEditJoke }) {
+function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange, onRoleCycle, onEditJoke }) {
   const { t } = useLang()
   const [expanded, setExpanded] = useState(false)
   const joke    = jokes.find(j => j.id === item.jokeId)
   const version = joke?.versions.find(v => v.id === item.versionId) ?? joke?.versions[0]
+  const roleChip = roleChipProps(item.role, t)
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg group overflow-hidden">
@@ -415,6 +431,15 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
         )}
         {version?.duration && (
           <span className="text-xs text-gray-400 font-mono shrink-0">⏱{version.duration}</span>
+        )}
+        {joke && (
+          <button
+            onClick={onRoleCycle}
+            title={t.markRoleHint}
+            className={`text-xs px-1.5 py-0.5 rounded-full font-medium shrink-0 leading-none transition-colors ${roleChip.cls}`}
+          >
+            {roleChip.label}
+          </button>
         )}
         <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
       </div>

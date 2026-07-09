@@ -1,17 +1,11 @@
-import { useState, useRef } from 'react'
-import { parseJsonFile, processImportData } from '../markdown'
+import { useState } from 'react'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
-import GuideModal from './GuideModal'
-import demoData from '../../test-jokes/jokes-library.json'
 
-export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll, onExportCustom, onDeleteAll }) {
+export default function JokesPage({ jokes, onEdit, onNew, onDemo }) {
   const { t, npl } = useLang()
-  const [showGuide, setShowGuide] = useState(false)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
-  const importRef = useRef(null)
 
   const visible = jokes.filter(j => {
     if (filter !== 'all' && j.status !== filter) return false
@@ -19,147 +13,16 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll,
     return true
   })
 
-  async function handleImport(e) {
-    for (const file of Array.from(e.target.files)) {
-      const text = await file.text()
-      const { jokes: nj, setlists: ns } = parseJsonFile(text)
-      nj.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
-      ns.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
-    }
-    e.target.value = ''
-  }
-
-  function handleDemo() {
-    const msg = jokes.length > 0 ? t.demoConfirmData : t.demoConfirmEmpty
-    if (!confirm(msg)) return
-    const { jokes: dj, setlists: ds } = processImportData(demoData)
-    dj.forEach(joke => dispatch({ type: 'SAVE_JOKE', joke }))
-    ds.forEach(setlist => dispatch({ type: 'SAVE_SETLIST', setlist }))
-  }
-
-  const noJokes = jokes.length === 0
-
   return (
     <div>
-      {showGuide && <GuideModal onClose={() => setShowGuide(false)} />}
-      <input ref={importRef} type="file" accept=".json" multiple className="hidden" onChange={handleImport} />
-
       <div className="flex items-center justify-between mb-6 gap-2">
         <h1 className="text-2xl font-bold text-gray-900 shrink-0">{t.jokes}</h1>
-
-        {/* Desktop: all buttons in one row */}
-        <div className="hidden sm:flex items-center gap-2 flex-wrap justify-end">
-          <button
-            onClick={() => setShowGuide(true)}
-            title={t.guide}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            <span aria-hidden="true">📖</span>
-            {t.guide}
-          </button>
-          <button
-            onClick={handleDemo}
-            className="px-3 py-1.5 text-sm border border-violet-200 rounded-lg text-violet-600 hover:bg-violet-50 transition-colors"
-          >
-            {t.demo}
-          </button>
-          <button
-            onClick={() => importRef.current.click()}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            {t.importJson}
-          </button>
-          <div className="w-px h-5 bg-gray-200 shrink-0" />
-          <button
-            onClick={onExportAll}
-            disabled={noJokes}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            {t.exportAll}
-          </button>
-          <button
-            onClick={onExportCustom}
-            disabled={noJokes}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            {t.exportCustom}
-          </button>
-          <button
-            onClick={onDeleteAll}
-            disabled={noJokes}
-            className="px-3 py-1.5 text-sm border border-red-200 rounded-lg text-red-400 hover:bg-red-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            {t.deleteAll}
-          </button>
-          <div className="w-px h-5 bg-gray-200 shrink-0" />
-          <button
-            onClick={onNew}
-            className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            {t.newJoke}
-          </button>
-        </div>
-
-        {/* Mobile: Export All + hamburger */}
-        <div className="flex sm:hidden items-center gap-2">
-          <button
-            onClick={onExportAll}
-            disabled={noJokes}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            {t.exportAll}
-          </button>
-          <div className="relative">
-            <button
-              onClick={() => setMenuOpen(v => !v)}
-              className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors leading-none"
-            >
-              ☰
-            </button>
-            {menuOpen && (
-              <>
-                <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 min-w-44 overflow-hidden">
-                  <button
-                    onClick={() => { setShowGuide(true); setMenuOpen(false) }}
-                    className="flex items-center gap-2 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <span aria-hidden="true">📖</span>
-                    {t.guide}
-                  </button>
-                  <div className="h-px bg-gray-100 my-1" />
-                  <button
-                    onClick={() => { handleDemo(); setMenuOpen(false) }}
-                    className="w-full text-left px-4 py-2.5 text-sm text-violet-600 hover:bg-violet-50 transition-colors"
-                  >
-                    {t.demo}
-                  </button>
-                  <button
-                    onClick={() => { importRef.current.click(); setMenuOpen(false) }}
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    {t.importJson}
-                  </button>
-                  <button
-                    onClick={() => { onExportCustom(); setMenuOpen(false) }}
-                    disabled={noJokes}
-                    className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-30 transition-colors"
-                  >
-                    {t.exportCustom}
-                  </button>
-                  <div className="h-px bg-gray-100 my-1" />
-                  <button
-                    onClick={() => { onDeleteAll(); setMenuOpen(false) }}
-                    disabled={noJokes}
-                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-red-50 disabled:opacity-30 transition-colors"
-                  >
-                    {t.deleteAll}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        <button
+          onClick={onNew}
+          className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          {t.newJoke}
+        </button>
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -192,7 +55,7 @@ export default function JokesPage({ jokes, dispatch, onEdit, onNew, onExportAll,
           <p className="text-lg font-medium text-gray-500 mb-1">{t.noJokes}</p>
           <p className="text-sm mb-6">{t.noJokesDesc}</p>
           <button
-            onClick={handleDemo}
+            onClick={onDemo}
             className="px-5 py-2.5 text-sm bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-colors"
           >
             {t.loadDemo}
