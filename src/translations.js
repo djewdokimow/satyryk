@@ -44,6 +44,8 @@ export const TRANSLATIONS = {
     textPlaceholder:     'Napisz swój żart tutaj…',
     notesLabel:          'Notatki (wskazówki sceniczne, przypomnienia)',
     notesPlaceholder:    'Pauza przed ostatnią linią. Lepiej działa w kameralnych miejscach…',
+    cuesLabel:           'Podpowiedzi na scenę (M5Stack — po jednej w wierszu)',
+    cuesPlaceholder:     'Zdejmij buty\nPasek, laptop, godność\nCallback: gość od rewizji',
     editJoke:            'Edytuj żart',
     addComment:          'Dodaj komentarz',
     commentPlaceholder:  'Komentarz od Buddy…',
@@ -69,6 +71,8 @@ export const TRANSLATIONS = {
     // ── SetlistBuilder ───────────────────────────────────────────────────────
     viewCards:          'Karty',
     showFullText:       'Tekst',
+    exportM5:           '📟 M5Stack',
+    exportM5Title:      'Eksportuj setlistę do M5Stack (.csv)',
     setlistTitlePlaceholder: 'Tytuł setlisty',
     showTimePlaceholder:     'czas show…',
     bitsTime:                'bity',
@@ -100,6 +104,10 @@ export const TRANSLATIONS = {
     printPreserveEnters: 'Zachowaj dodatkowe puste linie',
     printIncludeTime:    'Uwzględnij szacowany czas',
     printPreviewLabel:   'Podgląd',
+    printStyle:          'Styl',
+    printStyleRaw:       'Surowy',
+    printStylePretty:    'Ładny',
+    printFontSize:       'Wielkość liter',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────
     exportToJson:      'Eksportuj do .json',
@@ -188,6 +196,8 @@ export const TRANSLATIONS = {
     textPlaceholder:     'Write your joke here…',
     notesLabel:          'Notes (stage directions, reminders)',
     notesPlaceholder:    'Pause before the last line. Works better in intimate venues…',
+    cuesLabel:           'Stage cues (M5Stack — one per line)',
+    cuesPlaceholder:     'Take off shoes bit\nBelt, laptop, dignity\nCallback: pat-down guy',
     editJoke:            'Edit joke',
     addComment:          'Add comment',
     commentPlaceholder:  "Buddy's note…",
@@ -213,6 +223,8 @@ export const TRANSLATIONS = {
     // ── SetlistBuilder ───────────────────────────────────────────────────────
     viewCards:          'Cards',
     showFullText:       'Text',
+    exportM5:           '📟 M5Stack',
+    exportM5Title:      'Export setlist to M5Stack (.csv)',
     setlistTitlePlaceholder: 'Setlist title',
     showTimePlaceholder:     'show time…',
     bitsTime:                'bits',
@@ -244,6 +256,10 @@ export const TRANSLATIONS = {
     printPreserveEnters: 'Preserve extra blank lines',
     printIncludeTime:    'Include time estimate',
     printPreviewLabel:   'Preview',
+    printStyle:          'Style',
+    printStyleRaw:       'Raw',
+    printStylePretty:    'Pretty',
+    printFontSize:       'Font size',
 
     // ── ExportDialog ─────────────────────────────────────────────────────────
     exportToJson:      'Export to .json',

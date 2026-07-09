@@ -21,6 +21,7 @@ export function processImportData(data) {
             label:        String(v.label ?? 'v1'),
             text:         String(v.text  ?? '').trim(),
             notes:        String(v.notes ?? '').trim(),
+            cues:         String(v.cues  ?? '').trim(),
             _parentLabel: v.parentLabel ? String(v.parentLabel) : null,
             reactions:    Array.isArray(v.reactions) ? v.reactions.map(String) : [],
             duration:     v.duration ? String(v.duration) : '',
@@ -35,7 +36,7 @@ export function processImportData(data) {
                 }))
               : [],
           }))
-        : [{ id: uid(), label: 'v1', text: '', notes: '', _parentLabel: null }]
+        : [{ id: uid(), label: 'v1', text: '', notes: '', cues: '', _parentLabel: null }]
 
       const labelToId = new Map(rawVersions.map(v => [v.label, v.id]))
       const versions  = rawVersions.map(({ _parentLabel, ...v }) => ({
@@ -111,6 +112,7 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
         }
         obj.text = v.text ?? ''
         if (v.notes) obj.notes = v.notes
+        if (v.cues)  obj.cues  = v.cues
         if (v.reactions?.length) obj.reactions = v.reactions
         if (v.duration)          obj.duration  = v.duration
         if (v.comments?.length) {
@@ -141,8 +143,8 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
   return JSON.stringify(data, null, pretty ? 2 : undefined)
 }
 
-export function download(filename, content) {
-  const blob = new Blob([content], { type: 'application/json;charset=utf-8' })
+export function download(filename, content, mime = 'application/json;charset=utf-8') {
+  const blob = new Blob([content], { type: mime })
   const url  = URL.createObjectURL(blob)
   const a    = document.createElement('a')
   a.href     = url
@@ -151,6 +153,35 @@ export function download(filename, content) {
   a.click()
   document.body.removeChild(a)
   URL.revokeObjectURL(url)
+}
+
+// ── M5Stack prompter export ───────────────────────────────────────────────────
+// One bit per row: `Title,Cue 1,Cue 2, …` (see m5satyryk/data/setlist.csv).
+// Cues come from the chosen version's `cues` field, one per line. Segues are
+// transitions, not bits, so they are skipped.
+function csvCell(s) {
+  const v = String(s ?? '')
+  return /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v
+}
+
+export function exportSetlistToM5Csv(setlist, jokes) {
+  const lines = [
+    '# Comedian prompter setlist — exported from Satyryk',
+    `# ${String(setlist.title ?? '').replace(/[\r\n]+/g, ' ')}`,
+    '# Title,Cue 1,Cue 2,Cue 3, ...',
+  ]
+  setlist.items.forEach(item => {
+    if (item.type !== 'joke') return
+    const joke = jokes.find(j => j.id === item.jokeId)
+    if (!joke) return
+    const version = joke.versions.find(v => v.id === item.versionId) ?? joke.versions[0]
+    const cues = (version?.cues ?? '')
+      .split('\n')
+      .map(c => c.trim())
+      .filter(Boolean)
+    lines.push([joke.title, ...cues].map(csvCell).join(','))
+  })
+  return lines.join('\n') + '\n'
 }
 
 function uid() { return crypto.randomUUID() }

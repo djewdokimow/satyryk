@@ -3,6 +3,7 @@ import ShowView from './ShowView'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
 import { calcSetlistDuration, roleChipProps } from '../utils'
+import { exportSetlistToM5Csv, download } from '../markdown'
 
 // Per-setlist joke role: undefined (normal) → 'optional' → 'saver' → normal.
 const ROLE_CYCLE = { normal: 'optional', optional: 'saver', saver: 'normal' }
@@ -189,6 +190,10 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
 
   function removeItem(id) { updateItems(sl.items.filter(i => i.id !== id)) }
 
+  function handleM5Export() {
+    download('setlist.csv', exportSetlistToM5Csv(sl, jokes), 'text/csv;charset=utf-8')
+  }
+
   function moveItem(index, dir) {
     const items = [...sl.items]
     const swap = index + dir
@@ -231,6 +236,13 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
             className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
           >
             {t.showFullText}
+          </button>
+          <button
+            onClick={handleM5Export}
+            title={t.exportM5Title}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {t.exportM5}
           </button>
         </div>
       </div>

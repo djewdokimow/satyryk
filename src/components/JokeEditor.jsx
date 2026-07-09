@@ -19,7 +19,7 @@ const STATUS_IDLE = {
 const STATUS_OPTIONS = ['idea', 'draft', 'working', 'polished', 'retired']
 
 function uid() { return crypto.randomUUID() }
-function blankVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '', parentId: null, comments: [], reactions: [], duration: '' } }
+function blankVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '', cues: '', parentId: null, comments: [], reactions: [], duration: '' } }
 
 // Build a parent→children tree from a flat versions array.
 function buildTree(versions) {
@@ -183,6 +183,7 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
       label: `v${form.versions.length + 1}`,
       text: source?.text ?? '',
       notes: '',
+      cues: source?.cues ?? '',
       parentId: fromId,
       comments: [],
       reactions: [],
@@ -462,7 +463,7 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
           </div>
 
           {/* notes */}
-          <div>
+          <div className="mb-4">
             <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.notesLabel}</label>
             <textarea value={active.notes}
               onChange={e => saveVersion(active.id, { notes: e.target.value }, true)}
@@ -470,6 +471,17 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
               rows={3}
               className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-500 italic"
               placeholder={t.notesPlaceholder} />
+          </div>
+
+          {/* setlist cues (M5Stack prompter) */}
+          <div>
+            <label className="block text-xs font-medium text-gray-400 uppercase tracking-wide mb-2">{t.cuesLabel}</label>
+            <textarea value={active.cues ?? ''}
+              onChange={e => saveVersion(active.id, { cues: e.target.value }, true)}
+              onBlur={() => commitNow(form)}
+              rows={3}
+              className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg resize-y focus:outline-none focus:ring-2 focus:ring-gray-300 text-gray-600 font-mono"
+              placeholder={t.cuesPlaceholder} />
           </div>
         </div>
       )}
