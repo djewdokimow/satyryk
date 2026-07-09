@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import ShowView from './ShowView'
 import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
@@ -467,24 +467,35 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
 
 function SegueItem({ item, index, total, onMove, onRemove, onTextChange }) {
   const { t } = useLang()
+  const ref = useRef(null)
+
+  // Auto-grow the textarea so long transitions wrap onto multiple lines.
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight}px`
+  }, [item.segueText])
+
   return (
-    <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 border-dashed rounded-lg px-3 py-2 group">
-      <span className="text-xs text-gray-300 font-mono w-5 shrink-0">{index + 1}</span>
-      <div className="flex flex-col gap-0.5 shrink-0">
+    <div className="flex items-start gap-2 bg-gray-50 border border-gray-200 border-dashed rounded-lg px-3 py-2 group">
+      <span className="text-xs text-gray-300 font-mono w-5 shrink-0 pt-0.5">{index + 1}</span>
+      <div className="flex flex-col gap-0.5 shrink-0 pt-0.5">
         <button onClick={() => onMove(-1)} disabled={index === 0}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▲</button>
         <button onClick={() => onMove(1)} disabled={index === total - 1}
           className="text-gray-300 hover:text-gray-600 disabled:opacity-20 text-xs leading-none transition-colors">▼</button>
       </div>
-      <span className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0">{t.segueLabel}</span>
-      <input
-        type="text"
+      <span className="text-xs font-medium text-gray-400 uppercase tracking-wide shrink-0 pt-1">{t.segueLabel}</span>
+      <textarea
+        ref={ref}
+        rows={1}
         value={item.segueText ?? ''}
         onChange={e => onTextChange(e.target.value)}
         placeholder={t.seguePlaceholder}
-        className="flex-1 min-w-0 bg-transparent text-sm text-gray-600 italic placeholder-gray-300 focus:outline-none"
+        className="flex-1 min-w-0 bg-transparent text-sm text-gray-600 italic placeholder-gray-300 focus:outline-none resize-none overflow-hidden leading-relaxed"
       />
-      <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
+      <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm pt-0.5">✕</button>
     </div>
   )
 }
