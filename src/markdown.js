@@ -157,29 +157,36 @@ export function download(filename, content, mime = 'application/json;charset=utf
 
 // ── M5Stack prompter export ───────────────────────────────────────────────────
 // One bit per row: `Title,Cue 1,Cue 2, …` (see m5satyryk/data/setlist.csv).
-// Cues come from the chosen version's `cues` field, one per line. Segues are
-// transitions, not bits, so they are skipped.
+// Cues come from the chosen version's `cues` field, one per line. Segues become
+// title-less rows (empty first cell) with the transition text as their only cue.
 function csvCell(s) {
   const v = String(s ?? '')
   return /[",\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v
 }
 
-export function exportSetlistToM5Csv(setlist, jokes) {
+export function exportSetlistToM5Csv(setlist, jokes, roleLabels = null) {
   const lines = [
     '# Comedian prompter setlist — exported from Satyryk',
     `# ${String(setlist.title ?? '').replace(/[\r\n]+/g, ' ')}`,
     '# Title,Cue 1,Cue 2,Cue 3, ...',
   ]
   setlist.items.forEach(item => {
-    if (item.type !== 'joke') return
+    if (item.type === 'segue') {
+      const text = (item.segueText ?? '').trim()
+      if (text) lines.push(['', text].map(csvCell).join(','))  // no-title bit
+      return
+    }
+
     const joke = jokes.find(j => j.id === item.jokeId)
     if (!joke) return
     const version = joke.versions.find(v => v.id === item.versionId) ?? joke.versions[0]
+    const mark  = roleLabels && item.role ? ` (${roleLabels[item.role]})` : ''
+    const title = joke.title + mark
     const cues = (version?.cues ?? '')
       .split('\n')
       .map(c => c.trim())
       .filter(Boolean)
-    lines.push([joke.title, ...cues].map(csvCell).join(','))
+    lines.push([title, ...cues].map(csvCell).join(','))
   })
   return lines.join('\n') + '\n'
 }

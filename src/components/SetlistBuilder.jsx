@@ -191,7 +191,8 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
   function removeItem(id) { updateItems(sl.items.filter(i => i.id !== id)) }
 
   function handleM5Export() {
-    download('setlist.csv', exportSetlistToM5Csv(sl, jokes), 'text/csv;charset=utf-8')
+    const roleLabels = { optional: t.roleOptional, saver: t.roleSaver }
+    download('setlist.csv', exportSetlistToM5Csv(sl, jokes, roleLabels), 'text/csv;charset=utf-8')
   }
 
   function moveItem(index, dir) {
