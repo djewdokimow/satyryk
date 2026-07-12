@@ -4,6 +4,7 @@ import { STATUS_BADGE, ALL_STATUSES } from '../constants'
 import { useLang } from '../LanguageContext'
 import { calcSetlistDuration, roleChipProps } from '../utils'
 import { exportSetlistToM5Csv, download } from '../markdown'
+import RatingPicker from './Rating'
 
 // Per-setlist joke role: undefined (normal) → 'optional' → 'saver' → normal.
 const ROLE_CYCLE = { normal: 'optional', optional: 'saver', saver: 'normal' }
@@ -31,7 +32,7 @@ function PreviewModal({ joke, version, onClose, onEdit }) {
             <div className="flex items-center gap-2 text-xs text-gray-400">
               <span>{version.label}</span>
               {version.duration && <span>· ⏱{version.duration}</span>}
-              {version.reactions?.length > 0 && <span>{version.reactions.join('')}</span>}
+              {version.rating && <span className="text-sm">{version.rating}</span>}
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
@@ -129,7 +130,7 @@ function CardsView({ setlist, jokes, onClose, onEditJoke }) {
                   )}
                   {version && <span>{version.label}</span>}
                   {version?.duration && <span>· ⏱{version.duration}</span>}
-                  {version?.reactions?.length > 0 && <span>{version.reactions.join('')}</span>}
+                  {version?.rating && <span className="text-sm">{version.rating}</span>}
                   {joke.tags.length > 0 && (
                     <>
                       <span>·</span>
@@ -186,6 +187,14 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
   function cycleRole(item) {
     const nr = nextRole(item.role)
     updateItem(item.id, { role: nr === 'normal' ? undefined : nr })
+  }
+
+  // Rate a joke's version straight from the setlist (updates the joke globally).
+  function rateVersion(jokeId, versionId, rating) {
+    const joke = jokes.find(j => j.id === jokeId)
+    if (!joke) return
+    const versions = joke.versions.map(v => v.id === versionId ? { ...v, rating } : v)
+    dispatch({ type: 'SAVE_JOKE', joke: { ...joke, versions, updatedAt: new Date().toISOString() } })
   }
 
   function removeItem(id) { updateItems(sl.items.filter(i => i.id !== id)) }
@@ -256,7 +265,21 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
         placeholder={t.setlistTitlePlaceholder}
       />
 
-      <div className="flex items-center gap-4 mb-6 text-sm text-gray-500">
+      <div className="flex items-center gap-4 mb-6 text-sm text-gray-500 flex-wrap">
+        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => save({ state: 'upcoming' })}
+            className={`px-2.5 py-1 text-xs font-medium transition-colors ${(sl.state ?? 'upcoming') !== 'past' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            {t.setlistUpcoming}
+          </button>
+          <button
+            onClick={() => save({ state: 'past' })}
+            className={`px-2.5 py-1 text-xs font-medium transition-colors ${sl.state === 'past' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:text-gray-900'}`}
+          >
+            {t.setlistPast}
+          </button>
+        </div>
         <div className="flex items-center gap-1.5">
           <span className="text-gray-400">🎤</span>
           <input
@@ -272,6 +295,10 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
             ⏱ {t.bitsTime}: {totalDuration === '?' ? '?' : `~${totalDuration}`}
           </span>
         )}
+        <div className="flex items-center gap-1.5 ml-auto">
+          <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">{t.setlistRating}</span>
+          <RatingPicker value={sl.rating} onChange={r => save({ rating: r })} size="sm" />
+        </div>
       </div>
 
       {/* Mobile panel toggle */}
@@ -312,6 +339,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
                         onRemove={() => removeItem(item.id)}
                         onVersionChange={versionId => updateItem(item.id, { versionId })}
                         onRoleCycle={() => cycleRole(item)}
+                        onRate={rateVersion}
                         onEditJoke={onEditJoke}
                       />
                     : <SegueItem item={item} index={i} total={sl.items.length}
@@ -398,7 +426,7 @@ export default function SetlistBuilder({ setlist, jokes, dispatch, onBack, onEdi
   )
 }
 
-function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange, onRoleCycle, onEditJoke }) {
+function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange, onRoleCycle, onRate, onEditJoke }) {
   const { t } = useLang()
   const [expanded, setExpanded] = useState(false)
   const joke    = jokes.find(j => j.id === item.jokeId)
@@ -439,8 +467,8 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
         {joke && joke.versions.length === 1 && (
           <span className="text-xs text-gray-400 shrink-0">{joke.versions[0].label}</span>
         )}
-        {version?.reactions?.length > 0 && (
-          <span className="text-sm shrink-0">{version.reactions.join('')}</span>
+        {version?.rating && (
+          <span className="text-sm shrink-0">{version.rating}</span>
         )}
         {version?.duration && (
           <span className="text-xs text-gray-400 font-mono shrink-0">⏱{version.duration}</span>
@@ -456,16 +484,22 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
         )}
         <button onClick={onRemove} className="text-gray-200 hover:text-red-400 transition-colors ml-1 shrink-0 text-sm">✕</button>
       </div>
-      {expanded && version?.text && (
+      {expanded && version && (
         <div className="px-10 pb-3 pt-0 border-t border-gray-100">
-          <pre className="text-xs text-gray-600 whitespace-pre-wrap font-mono leading-relaxed mt-2">
-            {version.text}
-          </pre>
+          {version.text && (
+            <pre className="text-xs text-gray-600 whitespace-pre-wrap font-mono leading-relaxed mt-2">
+              {version.text}
+            </pre>
+          )}
           {version.notes && (
             <p className="mt-2 text-xs text-gray-400 italic border-l-2 border-gray-100 pl-2">
               {version.notes}
             </p>
           )}
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-xs text-gray-400">{t.ratingLabel}</span>
+            <RatingPicker value={version.rating} onChange={r => onRate(joke.id, version.id, r)} size="sm" />
+          </div>
           <button
             onClick={() => onEditJoke(joke.id, version.id)}
             className="mt-2 text-xs text-gray-400 hover:text-gray-700 underline transition-colors"

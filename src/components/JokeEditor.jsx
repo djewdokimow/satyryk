@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useLang } from '../LanguageContext'
 import TextWithComments from './TextWithComments'
+import RatingPicker from './Rating'
 
 const STATUS_ACTIVE = {
   idea:     'bg-gray-500 text-white',
@@ -19,7 +20,7 @@ const STATUS_IDLE = {
 const STATUS_OPTIONS = ['idea', 'draft', 'working', 'polished', 'retired']
 
 function uid() { return crypto.randomUUID() }
-function blankVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '', cues: '', parentId: null, comments: [], reactions: [], duration: '' } }
+function blankVersion(n) { return { id: uid(), label: `v${n}`, text: '', notes: '', cues: '', parentId: null, comments: [], rating: undefined, duration: '' } }
 
 // Build a parent→children tree from a flat versions array.
 function buildTree(versions) {
@@ -68,7 +69,7 @@ function TreeNode({ node, activeVid, onSelect }) {
   )
 }
 
-export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = [], initialVersionId }) {
+export default function JokeEditor({ joke, dispatch, onBack, initialVersionId }) {
   const { t, lang } = useLang()
 
   const initial = joke ?? {
@@ -91,8 +92,6 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
   const [canUndo, setCanUndo]   = useState(false)
   const [canRedo, setCanRedo]   = useState(false)
   const [showTree, setShowTree]             = useState(false)
-  const [editingReactions, setEditingReactions] = useState(false)
-  const [reactionInput, setReactionInput]       = useState('')
 
   const histRef    = useRef([JSON.stringify(initial)])
   const histIdxRef = useRef(0)
@@ -186,7 +185,7 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
       cues: source?.cues ?? '',
       parentId: fromId,
       comments: [],
-      reactions: [],
+      rating: undefined,
       duration: '',
     }
     save({ versions: [...form.versions, v] })
@@ -214,26 +213,6 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
 
   function handleTagsBlur() {
     save({ tags: tagsRaw.split(',').map(s => s.trim()).filter(Boolean) })
-  }
-
-  function toggleReaction(emoji) {
-    const reactions = active?.reactions ?? []
-    saveVersion(active.id, {
-      reactions: reactions.includes(emoji)
-        ? reactions.filter(r => r !== emoji)
-        : [...reactions, emoji],
-    })
-  }
-
-  function openEditReactions() {
-    setReactionInput(reactionEmojis.join(' '))
-    setEditingReactions(true)
-  }
-
-  function commitReactions() {
-    const emojis = reactionInput.trim().split(/\s+/).filter(Boolean)
-    dispatch({ type: 'SET_REACTION_EMOJIS', emojis: emojis.length > 0 ? emojis : reactionEmojis })
-    setEditingReactions(false)
   }
 
   const active = form.versions.find(v => v.id === activeVid) ?? form.versions[0]
@@ -401,46 +380,11 @@ export default function JokeEditor({ joke, dispatch, onBack, reactionEmojis = []
             ) : null
           })()}
 
-          {/* reactions */}
-          {reactionEmojis.length > 0 && (
-            <div className="flex items-center gap-1 mb-4 flex-wrap">
-              {editingReactions ? (
-                <input
-                  autoFocus
-                  value={reactionInput}
-                  onChange={e => setReactionInput(e.target.value)}
-                  onBlur={commitReactions}
-                  onKeyDown={e => { if (e.key === 'Enter') commitReactions(); if (e.key === 'Escape') setEditingReactions(false) }}
-                  className="text-sm px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300 w-48"
-                  placeholder="🔥 💀 😂"
-                />
-              ) : (
-                <>
-                  {reactionEmojis.map(emoji => {
-                    const active_ = (active.reactions ?? []).includes(emoji)
-                    return (
-                      <button
-                        key={emoji}
-                        onClick={() => toggleReaction(emoji)}
-                        className={`w-8 h-8 rounded-lg text-lg flex items-center justify-center transition-all ${
-                          active_ ? 'bg-amber-100 shadow-sm scale-110' : 'opacity-35 hover:opacity-70 hover:bg-gray-100'
-                        }`}
-                      >
-                        {emoji}
-                      </button>
-                    )
-                  })}
-                  <button
-                    onClick={openEditReactions}
-                    className="ml-1 text-xs text-gray-300 hover:text-gray-500 transition-colors"
-                    title={t.editReactions}
-                  >
-                    ✎
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          {/* rating */}
+          <div className="flex items-center gap-2 mb-4 flex-wrap">
+            <span className="text-xs font-medium text-gray-400 uppercase tracking-wide">{t.ratingLabel}</span>
+            <RatingPicker value={active.rating} onChange={r => saveVersion(active.id, { rating: r })} />
+          </div>
 
           {/* text */}
           <div className="mb-4">

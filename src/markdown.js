@@ -1,3 +1,5 @@
+import { RATINGS } from './constants'
+
 const VALID_STATUSES = ['idea', 'draft', 'working', 'polished', 'retired']
 
 // ── JSON import ───────────────────────────────────────────────────────────────
@@ -23,7 +25,7 @@ export function processImportData(data) {
             notes:        String(v.notes ?? '').trim(),
             cues:         String(v.cues  ?? '').trim(),
             _parentLabel: v.parentLabel ? String(v.parentLabel) : null,
-            reactions:    Array.isArray(v.reactions) ? v.reactions.map(String) : [],
+            rating:       RATINGS.includes(v.rating) ? v.rating : undefined,
             duration:     v.duration ? String(v.duration) : '',
             comments:     Array.isArray(v.comments)
               ? v.comments.map(c => ({
@@ -78,6 +80,8 @@ export function processImportData(data) {
       return {
         id:        uid(),
         title:     String(s.title),
+        ...(RATINGS.includes(s.rating) ? { rating: s.rating } : {}),
+        ...(s.state === 'past' ? { state: 'past' } : {}),
         items,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -113,8 +117,8 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
         obj.text = v.text ?? ''
         if (v.notes) obj.notes = v.notes
         if (v.cues)  obj.cues  = v.cues
-        if (v.reactions?.length) obj.reactions = v.reactions
-        if (v.duration)          obj.duration  = v.duration
+        if (v.rating)   obj.rating   = v.rating
+        if (v.duration) obj.duration = v.duration
         if (v.comments?.length) {
           obj.comments = v.comments.map(({ id: _id, ...c }) => c)
         }
@@ -124,6 +128,8 @@ export function exportToJson({ jokes, setlists }, { pretty = false } = {}) {
     ...(setlists.length > 0 ? {
       setlists: setlists.map(sl => ({
         title: sl.title,
+        ...(sl.rating ? { rating: sl.rating } : {}),
+        ...(sl.state === 'past' ? { state: 'past' } : {}),
         items: sl.items.flatMap(item => {
           if (item.type === 'segue') return [{ type: 'segue', text: item.segueText ?? '' }]
           const joke    = jokes.find(j => j.id === item.jokeId)

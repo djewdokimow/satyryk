@@ -1,5 +1,3 @@
-import { DEFAULT_REACTION_EMOJIS } from './constants'
-
 const KEY = 'satyryk_v1'
 const NUDGE_KEY = 'satyryk_last_nudge'
 
@@ -9,13 +7,12 @@ export function load() {
     if (raw) {
       const data = JSON.parse(raw)
       return {
-        jokes:          data.jokes          ?? [],
-        setlists:       data.setlists       ?? [],
-        reactionEmojis: data.reactionEmojis ?? DEFAULT_REACTION_EMOJIS,
+        jokes:    data.jokes    ?? [],
+        setlists: data.setlists ?? [],
       }
     }
   } catch {}
-  return { jokes: [], setlists: [], reactionEmojis: DEFAULT_REACTION_EMOJIS }
+  return { jokes: [], setlists: [] }
 }
 
 export function save(data) {

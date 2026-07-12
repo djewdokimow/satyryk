@@ -1,6 +1,7 @@
 export const ALL_STATUSES = ['idea', 'draft', 'working', 'polished', 'retired']
 
-export const DEFAULT_REACTION_EMOJIS = ['🔥', '💀', '😂', '🤔', '❌', '👌']
+// Fixed rating scale, worst → best. Used for both joke versions and setlists.
+export const RATINGS = ['💣', '👎', '👍', '⭐']
 
 export const STATUS_BADGE = {
   idea:     'bg-gray-100 text-gray-500',
