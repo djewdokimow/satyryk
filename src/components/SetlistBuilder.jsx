@@ -450,6 +450,9 @@ function JokeItem({ item, index, total, jokes, onMove, onRemove, onVersionChange
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${STATUS_BADGE[joke.status]}`}>
                 {t.status[joke.status]}
               </span>
+              {joke.tags.length > 0 && (
+                <span className="text-xs text-gray-400 truncate">{joke.tags.slice(0, 3).join(', ')}</span>
+              )}
             </div>
           ) : (
             <span className="text-sm text-red-400 italic">{t.deletedJoke}</span>
