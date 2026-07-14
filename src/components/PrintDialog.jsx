@@ -35,6 +35,15 @@ export function buildPrintText(setlist, jokes, opts, duration, roleLabels = null
 
     if (opts.includeNotes && version.notes?.trim()) parts.push(`[${version.notes.trim()}]`)
 
+    if (opts.includeComments) {
+      (version.comments ?? []).forEach(c => {
+        const ctext = (c.text ?? '').trim()
+        if (!ctext) return
+        const quote = (c.quote ?? '').trim()
+        parts.push(`💬 ${quote ? `«${quote}» ` : ''}${ctext}`)
+      })
+    }
+
     blocks.push(parts.join('\n'))
   })
 
@@ -77,7 +86,16 @@ export function buildPrettyBody(setlist, jokes, opts, duration, roleLabels = nul
     const notesHtml = opts.includeNotes && version.notes?.trim()
       ? `<p class="notes">${escapeHtml(version.notes.trim())}</p>` : ''
 
-    out.push(`<section class="bit ${item.role ?? ''}">${titleHtml}<p class="text">${escapeHtml(text)}</p>${notesHtml}</section>`)
+    const shownComments = opts.includeComments
+      ? (version.comments ?? []).filter(c => c.text?.trim()) : []
+    const commentsHtml = shownComments.length
+      ? `<ul class="comments">${shownComments.map(c => {
+          const q = (c.quote ?? '').trim()
+          return `<li>💬 ${q ? `<span class="q">«${escapeHtml(q)}»</span> ` : ''}${escapeHtml(c.text.trim())}</li>`
+        }).join('')}</ul>`
+      : ''
+
+    out.push(`<section class="bit ${item.role ?? ''}">${titleHtml}<p class="text">${escapeHtml(text)}</p>${notesHtml}${commentsHtml}</section>`)
   })
 
   return out.join('\n')
@@ -98,6 +116,9 @@ ${root} h2 { font-size:${s(1.1)}; font-weight:700; margin:0 0 .3em; }
 ${root} .role { font-size:${s(0.75)}; color:#888; font-weight:400; }
 ${root} .text { white-space:pre-wrap; margin:0; }
 ${root} .notes { color:#666; font-style:italic; font-size:${s(0.82)}; margin:.4em 0 0; }
+${root} .comments { list-style:none; margin:.4em 0 0; padding:0; }
+${root} .comments li { color:#8a6d1f; font-size:${s(0.8)}; margin:.15em 0; }
+${root} .comments .q { font-style:italic; opacity:.85; }
 ${root} .segue { text-align:center; color:#999; font-style:italic; font-size:${s(0.85)}; margin:1.1em 0; }
 `
 }
@@ -109,6 +130,7 @@ export default function PrintDialog({ setlist, jokes, onClose }) {
   const [opts, setOpts] = useState({
     showTitle:      true,
     includeNotes:   false,
+    includeComments:false,
     includeSegues:  true,
     preserveEnters: false,
     includeTime:    false,
@@ -175,6 +197,10 @@ export default function PrintDialog({ setlist, jokes, onClose }) {
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input type="checkbox" checked={opts.includeNotes} onChange={() => toggle('includeNotes')} />
             {t.printIncludeNotes}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" checked={opts.includeComments} onChange={() => toggle('includeComments')} />
+            {t.printIncludeComments}
           </label>
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input type="checkbox" checked={opts.includeSegues} onChange={() => toggle('includeSegues')} />
